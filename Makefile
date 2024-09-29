@@ -6,7 +6,7 @@ CXXFLAGS = -std=c++17 -Wall -g
 SFML_LIBS = -lsfml-graphics -lsfml-window -lsfml-system
 
 # Source files and output executable
-SRCS = main.cpp Board.cpp Tile.cpp
+SRCS = main.cpp Board.cpp Tile.cpp Player.cpp Property.cpp Game.cpp
 OBJS = $(SRCS:.cpp=.o)
 TARGET = monopoly
 

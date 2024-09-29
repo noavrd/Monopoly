@@ -1,10 +1,23 @@
 #include <SFML/Graphics.hpp>
-#include "Board.hpp"
+#include "Game.hpp"
+#include <iostream>
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(1100, 1100), "Monopoly Game");
+    int numPlayers;
+    std::cout << "Enter number of players (2-8): ";
+    std::cin >> numPlayers;
 
-    Board board;
+    if (numPlayers < 2 || numPlayers > 8) {
+        std::cout << "Invalid number of players!" << std::endl;
+        return 1;
+    }
+
+    Game game(numPlayers);
+
+    // Create the window for the game with smaller dimensions
+    sf::RenderWindow window(sf::VideoMode(900, 1000), "Monopoly Game");  // Adjusted window size to fit board and message
+
+    bool gameInProgress = true;
 
     while (window.isOpen()) {
         sf::Event event;
@@ -13,9 +26,24 @@ int main() {
                 window.close();
         }
 
-        window.clear(sf::Color::White);
-        board.draw(window);
+        // Handle game logic
+        if (gameInProgress && sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+            game.takeTurn();  // Roll dice and process the player's turn
+            gameInProgress = !game.isGameOver();
+        }
+
+        // Clear the window with a white background
+        window.clear(sf::Color::White);  // Set the background to white
+
+        // Draw the game elements (board, tiles, players, etc.)
+        game.updateGraphics(window);
+
+        // Display the window contents
         window.display();
+    }
+
+    if (game.isGameOver()) {
+        std::cout << "Game Over!" << std::endl;
     }
 
     return 0;

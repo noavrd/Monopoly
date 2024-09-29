@@ -1,22 +1,20 @@
-#ifndef BOARD_HPP
-#define BOARD_HPP
-
+#pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include <string>
 #include "Tile.hpp"
+#include "Player.hpp"
 
 class Board {
 public:
-    Board();
-    void draw(sf::RenderWindow& window);
-
-private:
-    std::vector<Tile> tiles;
     sf::Font font;
+    std::vector<Tile> tiles;
+    std::vector<sf::CircleShape> playerTokens;
+    sf::Text gameText;  
 
+    Board();
     void initializeBoard();
-    void createTile(const std::string& name, int price, TileType type, const sf::Vector2f& position, const sf::Color& color);
+    void draw(sf::RenderWindow& window);
+    void updatePlayerPosition(Player& player, int playerIndex);
+    void setMessage(const std::string& message);  
+    void createTile(const std::string& name, int price, TileType type, sf::Vector2f position, sf::Color color);
 };
-
-#endif // BOARD_HPP
