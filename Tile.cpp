@@ -11,8 +11,11 @@ Tile::Tile(const std::string& name, int price, TileType type, sf::Vector2f posit
     shape.setOutlineThickness(2.0f);
     shape.setOutlineColor(sf::Color::Black);
 
+    std::string formattedName = name;
+    std::replace(formattedName.begin(), formattedName.end(), ' ', '\n');
+
     label.setFont(font);
-    label.setString(name);
+    label.setString(formattedName);
     label.setCharacterSize(10);
     label.setFillColor(sf::Color::Black);
 

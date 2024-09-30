@@ -76,7 +76,6 @@ void Player::goToJail() {
     inJail = true;
     jailTurns = 3;
     position = 10;  // position 10 is the Jail tile - maybe change
-    std::cout << name << " has been sent to jail!" << std::endl;
 }
 
 void Player::getOutOfJail() {

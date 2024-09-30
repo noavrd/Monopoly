@@ -30,88 +30,74 @@ Game::Game(int numPlayers) : currentPlayerIndex(0), diceRollResult(0), isDoubleR
 void Game::takeTurn() {
     Player& currentPlayer = players[currentPlayerIndex];
 
-    std::cout << "Current player: " << currentPlayer.name << ", Position: " << currentPlayer.position << std::endl;
+     std::cout << "Current player: " << currentPlayer.name << std::endl;
 
     if (currentPlayer.inJail) {
-        std::ostringstream jailMessage;
-        jailMessage << currentPlayer.name << " is in jail.";
-        board.setMessage(jailMessage.str());
-        
+        std::cout << currentPlayer.name << " is in jail." << std::endl;
+
         currentPlayer.jailTurns--;
 
         if (currentPlayer.jailTurns == 0 || (std::rand() % 6 + 1 == std::rand() % 6 + 1)) {
             currentPlayer.inJail = false;
-            std::ostringstream outOfJailMessage;
-            outOfJailMessage << currentPlayer.name << " is out of jail!";
-            board.setMessage(outOfJailMessage.str());
+            std::cout << currentPlayer.name << " is out of jail!" << std::endl;
         } else {
-            std::ostringstream stayInJailMessage;
-            stayInJailMessage << currentPlayer.name << " stays in jail for another turn.";
-            board.setMessage(stayInJailMessage.str());
-            endTurn();  // Move to the next player
+            std::cout << currentPlayer.name << " stays in jail for another turn." << std::endl;
+            std::cout << std::endl;  // Empty line after player's turn
+            endTurn();
             return;
         }
     }
 
-    rollDice();  // Roll the dice and move the current player
-    board.updatePlayerPosition(currentPlayer, currentPlayerIndex);  // Update the player's position on the board
+    rollDice();
+    board.updatePlayerPosition(currentPlayer, currentPlayerIndex);
 
-    // Ensure position is within bounds
-    if (currentPlayer.position >= board.tiles.size()) {
-        std::cerr << "Error: Player position out of bounds!" << std::endl;
-        return;
-    }
-
-    // Handle the action for the tile the player landed on
     Tile& landedTile = board.tiles[currentPlayer.position];
-
-    std::ostringstream actionMessage;
 
     if (landedTile.type == TileType::PROPERTY || landedTile.type == TileType::RAILROAD || landedTile.type == TileType::UTILITY) {
         if (landedTile.owner == nullptr) {
-            if (currentPlayer.canAfford(landedTile.price)) {
-                currentPlayer.subtractCash(landedTile.price);
-                landedTile.owner = &currentPlayer;
-                actionMessage << currentPlayer.name << " bought " << landedTile.name << " for $" << landedTile.price;
-                board.setMessage(actionMessage.str());
-            } else {
-                actionMessage << currentPlayer.name << " cannot afford " << landedTile.name;
-                board.setMessage(actionMessage.str());
+            std::cout << currentPlayer.name << " landed on " << landedTile.name << ". Would you like to buy it for $" 
+                      << landedTile.price << "? Press 'y' to buy or 'n' to decline." << std::endl;
+
+            bool decisionMade = false;
+            while (!decisionMade) {
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y)) {
+                    currentPlayer.subtractCash(landedTile.price);
+                    landedTile.owner = &currentPlayer;
+                    std::cout << currentPlayer.name << " bought " << landedTile.name << " for $" << landedTile.price << std::endl;
+                    decisionMade = true;
+                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::N)) {
+                    std::cout << currentPlayer.name << " decided not to buy " << landedTile.name << std::endl;
+                    decisionMade = true;
+                }
             }
         } else if (landedTile.owner != &currentPlayer) {
-            if (landedTile.owner) {
-                int rent = landedTile.calculateRent();
-                if (currentPlayer.canAfford(rent)) {
-                    currentPlayer.subtractCash(rent);
-                    landedTile.owner->addCash(rent);
-                    actionMessage << currentPlayer.name << " paid $" << rent << " in rent to " << landedTile.owner->name;
-                    board.setMessage(actionMessage.str());
-                } else {
-                    actionMessage << currentPlayer.name << " cannot afford rent and is bankrupt!";
-                    board.setMessage(actionMessage.str());
-                    // add bankruptcy logic
-                }
+            int rent = landedTile.calculateRent();
+            if (currentPlayer.canAfford(rent)) {
+                currentPlayer.subtractCash(rent);
+                landedTile.owner->addCash(rent);
+                std::cout << currentPlayer.name << " paid $" << rent << " in rent to " << landedTile.owner->name << std::endl;
             } else {
-                std::cerr << "Error: landedTile.owner is nullptr" << std::endl;
+                std::cout << currentPlayer.name << " cannot afford rent and is bankrupt!" << std::endl;
             }
         }
     } else if (landedTile.type == TileType::TAX) {
         currentPlayer.subtractCash(landedTile.price);
-        actionMessage << currentPlayer.name << " paid $" << landedTile.price << " in taxes";
-        board.setMessage(actionMessage.str());
+        std::cout << currentPlayer.name << " paid $" << landedTile.price << " in taxes." << std::endl;
     } else if (landedTile.type == TileType::GO_TO_JAIL) {
         currentPlayer.goToJail();
         board.updatePlayerPosition(currentPlayer, currentPlayerIndex);
-        board.setMessage(currentPlayer.name + " is sent to jail!");
+        std::cout << currentPlayer.name << " has been sent to jail!" << std::endl;
     } else if (landedTile.type == TileType::FREE_PARKING) {
-        board.setMessage(currentPlayer.name + " is resting at Free Parking");
+        std::cout << currentPlayer.name << " is resting at Free Parking." << std::endl;
     } else if (landedTile.type == TileType::GO) {
-        board.setMessage(currentPlayer.name + " landed on GO! Collect $200");
+        std::cout << currentPlayer.name << " landed on GO! Collect $200." << std::endl;
         currentPlayer.addCash(200);
     }
 
-    endTurn();  // End the current player's turn
+    std::cout << std::endl;  
+    endTurn();
 }
+
 
 void Game::rollDice() {
     // Roll two dice
@@ -129,7 +115,7 @@ void Game::rollDice() {
         if (consecutiveDoubles == 3) {
             players[currentPlayerIndex].goToJail();
             board.updatePlayerPosition(players[currentPlayerIndex], currentPlayerIndex);
-            board.setMessage(players[currentPlayerIndex].name + " rolled doubles three times and is sent to Jail!");
+            std::cout << players[currentPlayerIndex].name << " rolled doubles three times and is sent to Jail!" << std::endl;
             endTurn();
             return;
         }
@@ -143,7 +129,7 @@ void Game::rollDice() {
     // Handle passing GO and collecting $200
     if (players[currentPlayerIndex].position < diceRollResult) {
         players[currentPlayerIndex].addCash(200);
-        board.setMessage(players[currentPlayerIndex].name + " passed GO! Collect $200");
+        std::cout << players[currentPlayerIndex].name << " passed GO! Collect $200" << std::endl;
     }
 }
 
@@ -151,7 +137,8 @@ void Game::endTurn() {
     if (!isDoubleRoll) {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();  // Move to the next player
     } else {
-        board.setMessage(players[currentPlayerIndex].name + " rolled doubles! Take another turn.");
+         std::cout << players[currentPlayerIndex].name << " rolled doubles! Take another turn." << std::endl;
+
     }
     isDoubleRoll = false;
     consecutiveDoubles = 0;
