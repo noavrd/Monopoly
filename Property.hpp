@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-class Player;
+class Player;  // Forward declaration
 
 class Property {
 public:
@@ -16,5 +16,6 @@ public:
     bool hasHotel;
 
     Property(const std::string& propertyName, int propertyPrice, int propertyRent, int houseCost, int rentHouse, int rentHotel);
+
     int calculateRent() const;
 };

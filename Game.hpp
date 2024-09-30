@@ -1,19 +1,23 @@
 #pragma once
-#include <vector>
-#include "Player.hpp"
-#include "Tile.hpp"
 #include "Board.hpp"
+#include "Player.hpp"
+#include <SFML/Graphics.hpp>
+#include <vector>
 
 class Game {
 public:
-    std::vector<Player> players;
-    Board board;
-    int currentPlayerIndex;
-
     Game(int numPlayers);
     void takeTurn();
     void rollDice();
     void endTurn();
     bool isGameOver() const;
     void updateGraphics(sf::RenderWindow& window);
+
+private:
+    std::vector<Player> players;
+    int currentPlayerIndex;
+    Board board;
+    int diceRollResult;
+    bool isDoubleRoll;
+    int consecutiveDoubles;
 };

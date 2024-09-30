@@ -13,7 +13,7 @@ public:
 
     Board();
     void initializeBoard();
-    void draw(sf::RenderWindow& window);
+    void draw(sf::RenderWindow& window, const std::vector<Player>& players);
     void updatePlayerPosition(Player& player, int playerIndex);
     void setMessage(const std::string& message);  
     void createTile(const std::string& name, int price, TileType type, sf::Vector2f position, sf::Color color);

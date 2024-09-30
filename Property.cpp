@@ -9,7 +9,7 @@ int Property::calculateRent() const {
     if (hasHotel) {
         return rentWithHotel;
     } else if (houses > 0) {
-        return rentWithHouse * (1 << (houses - 1));
+        return rentWithHouse * (1 << (houses - 1));  // Rent increases exponentially with houses
     } else {
         return rent;
     }

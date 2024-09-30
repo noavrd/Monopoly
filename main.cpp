@@ -13,11 +13,10 @@ int main() {
     }
 
     Game game(numPlayers);
+    bool turnTaken = false;  
 
-    // Create the window for the game with smaller dimensions
-    sf::RenderWindow window(sf::VideoMode(900, 1000), "Monopoly Game");  // Adjusted window size to fit board and message
-
-    bool gameInProgress = true;
+    // Create the window for the game
+    sf::RenderWindow window(sf::VideoMode(900, 900), "Monopoly Game");
 
     while (window.isOpen()) {
         sf::Event event;
@@ -26,24 +25,25 @@ int main() {
                 window.close();
         }
 
-        // Handle game logic
-        if (gameInProgress && sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-            game.takeTurn();  // Roll dice and process the player's turn
-            gameInProgress = !game.isGameOver();
+        // Handle spacebar input for rolling dice and taking turns
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !turnTaken) {
+            game.takeTurn();  // Only the current player will take their turn
+            turnTaken = true;  // Mark that the turn has been taken
         }
 
-        // Clear the window with a white background
-        window.clear(sf::Color::White);  // Set the background to white
+        // Reset the flag when the spacebar is released
+        if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+            turnTaken = false;  // Allow another turn when spacebar is pressed again
+        }
 
-        // Draw the game elements (board, tiles, players, etc.)
+        // Update the graphics after each turn
         game.updateGraphics(window);
 
-        // Display the window contents
-        window.display();
-    }
-
-    if (game.isGameOver()) {
-        std::cout << "Game Over!" << std::endl;
+        // Check for the game over condition
+        if (game.isGameOver()) {
+            std::cout << "Game Over!" << std::endl;
+            window.close();
+        }
     }
 
     return 0;
