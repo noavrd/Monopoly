@@ -1,6 +1,7 @@
 #pragma once
 #include "Board.hpp"
 #include "Player.hpp"
+#include "ChanceCard.hpp" 
 #include <SFML/Graphics.hpp>
 #include <vector>
 
@@ -20,4 +21,5 @@ private:
     int diceRollResult;
     bool isDoubleRoll;
     int consecutiveDoubles;
+    std::vector<ChanceCard> chanceCards; 
 };

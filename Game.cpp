@@ -1,5 +1,6 @@
 #include "Game.hpp"
 #include "Tile.hpp"  
+#include "ChanceCard.hpp"
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -22,6 +23,8 @@ Game::Game(int numPlayers) : currentPlayerIndex(0), diceRollResult(0), isDoubleR
         player.color = playerColors[i % playerColors.size()];  
         players.push_back(player);
     }
+
+    chanceCards = initializeChanceCards();
 
     // Initialize board
     board.initializeBoard();
@@ -89,6 +92,14 @@ void Game::takeTurn() {
         std::cout << currentPlayer.name << " has been sent to jail!" << std::endl;
     } else if (landedTile.type == TileType::FREE_PARKING) {
         std::cout << currentPlayer.name << " is resting at Free Parking." << std::endl;
+    } else if (landedTile.type == TileType::CHANCE) {
+        // Pick a random chance card
+        int cardIndex = std::rand() % chanceCards.size();
+        ChanceCard& card = chanceCards[cardIndex];
+
+        std::cout << "Chance Card: " << card.description << std::endl;
+        // Apply the card's effect
+        card.applyEffect(currentPlayer, players, currentPlayerIndex);
     } else if (landedTile.type == TileType::GO) {
         std::cout << currentPlayer.name << " landed on GO! Collect $200." << std::endl;
         currentPlayer.addCash(200);
