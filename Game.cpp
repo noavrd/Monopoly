@@ -33,21 +33,31 @@ Game::Game(int numPlayers) : currentPlayerIndex(0), diceRollResult(0), isDoubleR
 void Game::takeTurn() {
     Player& currentPlayer = players[currentPlayerIndex];
 
-     std::cout << "Current player: " << currentPlayer.name << std::endl;
+    std::cout << "Current player: " << currentPlayer.name << std::endl;
 
+    // Jail logic
     if (currentPlayer.inJail) {
         std::cout << currentPlayer.name << " is in jail." << std::endl;
 
-        currentPlayer.jailTurns--;
+        // Roll dice to try and get doubles to leave jail
+        int die1 = std::rand() % 6 + 1;
+        int die2 = std::rand() % 6 + 1;
+        std::cout << "Rolling to try to get out of jail: " << die1 << " and " << die2 << std::endl;
 
-        if (currentPlayer.jailTurns == 0 || (std::rand() % 6 + 1 == std::rand() % 6 + 1)) {
+        if (die1 == die2) {
             currentPlayer.inJail = false;
-            std::cout << currentPlayer.name << " is out of jail!" << std::endl;
+            currentPlayer.jailTurns = 0;
+            std::cout << currentPlayer.name << " rolled doubles and is out of jail!" << std::endl;
         } else {
-            std::cout << currentPlayer.name << " stays in jail for another turn." << std::endl;
-            std::cout << std::endl;  // Empty line after player's turn
-            endTurn();
-            return;
+            currentPlayer.decrementJailTurn();
+            if (currentPlayer.inJail) {
+                std::cout << currentPlayer.name << " stays in jail for another turn." << std::endl;
+                std::cout << std::endl;  // Empty line after player's turn
+                endTurn();
+                return;
+            } else {
+                std::cout << currentPlayer.name << " has completed their time in jail and is now out!" << std::endl;
+            }
         }
     }
 
@@ -58,7 +68,7 @@ void Game::takeTurn() {
 
     if (landedTile.type == TileType::PROPERTY || landedTile.type == TileType::RAILROAD || landedTile.type == TileType::UTILITY) {
         if (landedTile.owner == nullptr) {
-            std::cout << currentPlayer.name << " landed on " << landedTile.name << ". Would you like to buy it for $" 
+            std::cout << currentPlayer.name << " landed on " << landedTile.name << ". Would you like to buy it for $"
                       << landedTile.price << "? Press 'y' to buy or 'n' to decline." << std::endl;
 
             bool decisionMade = false;
@@ -105,7 +115,7 @@ void Game::takeTurn() {
         currentPlayer.addCash(200);
     }
 
-    std::cout << std::endl;  
+    std::cout << std::endl;
     endTurn();
 }
 

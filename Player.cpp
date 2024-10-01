@@ -116,15 +116,37 @@ void Player::buildHotel(Tile* property, Board& board) {
 
 void Player::goToJail() {
     inJail = true;
-    jailTurns = 3;
-    position = 10;  // Position 10 is the Jail tile - adjust if needed
+    jailTurns = 3;  
+    position = 10;  
+    std::cout << name << " has been sent to jail!" << std::endl;
 }
 
-void Player::getOutOfJail() {
-    inJail = false;
-    jailTurns = 0;
-    std::cout << name << " has been released from jail!" << std::endl;
+void Player::tryExitJail() {
+    if (hasGetOutOfJailCard) {
+        inJail = false;
+        jailTurns = 0;
+        hasGetOutOfJailCard = false;
+        std::cout << name << " used a 'Get Out of Jail Free' card to exit jail." << std::endl;
+    } else if (jailTurns == 0) {
+        if (cash >= 50) {
+            cash -= 50;
+            inJail = false;
+            std::cout << name << " paid 50 shekels to exit jail." << std::endl;
+        } else {
+            std::cout << name << " cannot afford to pay the fine and remains in jail." << std::endl;
+        }
+    }
 }
+
+void Player::decrementJailTurn() {
+    if (inJail) {
+        jailTurns--;
+        if (jailTurns == 0) {
+            tryExitJail();
+        }
+    }
+}
+
 
 int Player::getNumberOfTrains() const {
     int count = 0;

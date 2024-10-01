@@ -20,22 +20,6 @@ std::vector<ChanceCard> initializeChanceCards() {
             player.goToJail();
             std::cout << player.name << " is sent directly to jail!" << std::endl;
         }},
-        // {"Make general repairs on all your property – For each house pay $25 – For each hotel $100", [](Player& player, std::vector<Player>&, int&) {
-        //     int houseCost = 25;
-        //     int hotelCost = 100;
-        //     int totalCost = 0;
-        //     for (auto& tile : player.ownedTiles) {
-        //         Tile* property = dynamic_cast<Tile*>(tile);
-        //         if (property) {
-        //             totalCost += property->houses * houseCost;
-        //             if (property->hasHotel) {
-        //                 totalCost += hotelCost;
-        //             }
-        //         }
-        //     }
-        //     player.subtractCash(totalCost);
-        //     std::cout << player.name << " pays $" << totalCost << " for property repairs!" << std::endl;
-        // }},
         {"Pay poor tax of $15", [](Player& player, std::vector<Player>&, int&) {
             player.subtractCash(15);
             std::cout << player.name << " pays poor tax of $15!" << std::endl;
@@ -63,10 +47,10 @@ std::vector<ChanceCard> initializeChanceCards() {
             player.addCash(150);
             std::cout << player.name << " collects $150!" << std::endl;
         }},
-        // {"Get out of Jail Free – This card may be kept until needed or traded", [](Player& player, std::vector<Player>&, int&) {
-        //     player.getOutOfJailFreeCard = true;
-        //     std::cout << player.name << " receives a Get Out of Jail Free card!" << std::endl;
-        // }},
+        {"Get out of Jail Free – This card may be kept until needed or traded", [](Player& player, std::vector<Player>&, int&) {
+            player.hasGetOutOfJailCard = true;
+            std::cout << player.name << " receives a Get Out of Jail Free card!" << std::endl;
+        }},
         {"Advance to Illinois Ave. – If you pass Go, collect $200", [](Player& player, std::vector<Player>&, int&) {
             if (player.position > 24) player.addCash(200);  // Pass Go
             player.position = 24;  // Move to Illinois Ave.
@@ -77,21 +61,21 @@ std::vector<ChanceCard> initializeChanceCards() {
             player.position = 11;  // Move to St. Charles Place
             std::cout << player.name << " advances to St. Charles Place!" << std::endl;
         }},
-        // {"You are assessed for street repairs – $40 per house, $115 per hotel", [](Player& player, std::vector<Player>&, int&) {
-        //     int houseCost = 40;
-        //     int hotelCost = 115;
-        //     int totalCost = 0;
-        //     for (auto& tile : player.ownedTiles) {
-        //         Tile* property = dynamic_cast<Tile*>(tile);
-        //         if (property) {
-        //             totalCost += property->houses * houseCost;
-        //             if (property->hasHotel) {
-        //                 totalCost += hotelCost;
-        //             }
-        //         }
-        //     }
-        //     player.subtractCash(totalCost);
-        //     std::cout << player.name << " pays $" << totalCost << " for street repairs!" << std::endl;
-        // }},
+        {"You are assessed for street repairs – $40 per house, $115 per hotel", [](Player& player, std::vector<Player>&, int&) {
+            int houseCost = 40;
+            int hotelCost = 115;
+            int totalCost = 0;
+            for (auto& tile : player.ownedTiles) {
+                Tile* property = dynamic_cast<Tile*>(tile);
+                if (property) {
+                    totalCost += property->houses * houseCost;
+                    if (property->hasHotel) {
+                        totalCost += hotelCost;
+                    }
+                }
+            }
+            player.subtractCash(totalCost);
+            std::cout << player.name << " pays $" << totalCost << " for street repairs!" << std::endl;
+        }},
     };
 }
