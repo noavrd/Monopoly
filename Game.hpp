@@ -24,7 +24,8 @@ private:
     int consecutiveDoubles;
     std::vector<ChanceCard> chanceCards; 
 
-    // Declare the missing functions
     void handlePropertyLanding(Player& currentPlayer, Tile& landedTile); 
     void handleChanceCard(Player& currentPlayer);
+    void handleBankruptcy(Player& bankruptPlayer, Player* creditor);
+
 };

@@ -30,5 +30,9 @@ public:
     void goToJail();          
     void tryExitJail();        
     void decrementJailTurn();  
-    int getNumberOfTrains() const;  
+    int getNumberOfTrains() const; 
+
+    bool operator==(const Player& other) const {
+        return name == other.name;
+    } 
 };
