@@ -3,7 +3,7 @@
 
 using namespace std; 
 
-Tile::Tile(const std::string& name, int price, TileType type, ColorGroup colorGroup, sf::Vector2f position, sf::Color color, const sf::Font& font, int houseCost)
+Tile::Tile(const string& name, int price, TileType type, ColorGroup colorGroup, sf::Vector2f position, sf::Color color, const sf::Font& font, int houseCost)
     : name(name), price(price), type(type), colorGroup(colorGroup), houseCost(houseCost), houses(0), hasHotel(false), owner(nullptr) {  
     shape.setSize({ 60.0f, 60.0f });
     shape.setFillColor(color);
@@ -13,8 +13,8 @@ Tile::Tile(const std::string& name, int price, TileType type, ColorGroup colorGr
     shape.setOutlineThickness(2.0f);
     shape.setOutlineColor(sf::Color::Black);
 
-    std::string formattedName = name;
-    std::replace(formattedName.begin(), formattedName.end(), ' ', '\n');
+    string formattedName = name;
+    replace(formattedName.begin(), formattedName.end(), ' ', '\n');
 
     label.setFont(font);
     label.setString(formattedName);
