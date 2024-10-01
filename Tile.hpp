@@ -25,10 +25,15 @@ public:
     sf::RectangleShape shape;
     sf::Text label;
     Player* owner;
+    sf::Vector2f position;
+    const sf::Font& font;
 
     Tile(const std::string& name, int price, TileType type, ColorGroup colorGroup, sf::Vector2f position, sf::Color color, const sf::Font& font, int houseCost);
 
     void draw(sf::RenderWindow& window);
     int calculateRent(int diceRollResult) const;
     TileType getType() const;
+    void setOwner(Player* newOwner);
+    void centerLabel();
+    void updateLabel();
 };

@@ -35,12 +35,13 @@ void Player::buyProperty(Tile* property) {
     if (canAfford(property->price)) {
         subtractCash(property->price);
         ownedTiles.push_back(property);
-        property->owner = this;
+        property->setOwner(this);
         cout << name << " bought " << property->name << " for $" << property->price << endl;
     } else {
         cout << name << " cannot afford to buy " << property->name << endl;
     }
 }
+
 
 // Helper function to check color group ownership
 bool Player::ownsAllInColorGroup(const vector<Tile*>& colorGroupTiles) const {

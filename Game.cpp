@@ -54,7 +54,6 @@ void Game::takeTurn() {
             currentPlayer.decrementJailTurn();
             if (currentPlayer.inJail) {
                 cout << currentPlayer.name << " stays in jail for another turn." << endl;
-                cout << endl;  // Empty line after player's turn
                 endTurn();
                 return;
             } else {
@@ -71,52 +70,7 @@ void Game::takeTurn() {
 
     // Property, Railroad, or Utility handling
     if (landedTile.type == TileType::PROPERTY || landedTile.type == TileType::RAILROAD || landedTile.type == TileType::UTILITY) {
-        if (landedTile.owner == nullptr) {
-            // Check if player can afford the property
-            if (currentPlayer.canAfford(landedTile.price)) {
-                cout << currentPlayer.name << " landed on " << landedTile.name << ". Would you like to buy it for $"
-                          << landedTile.price << "? Press 'y' to buy or 'n' to decline." << endl;
-
-                bool decisionMade = false;
-                while (!decisionMade) {
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y)) {
-                        currentPlayer.subtractCash(landedTile.price);
-                        landedTile.owner = &currentPlayer;
-                        currentPlayer.ownedTiles.push_back(&landedTile);
-                        cout << currentPlayer.name << " bought " << landedTile.name << " for $" << landedTile.price << endl;
-                        decisionMade = true;
-                    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::N)) {
-                        cout << currentPlayer.name << " decided not to buy " << landedTile.name << endl;
-                        decisionMade = true;
-                    }
-                }
-            } else {
-                // Inform the player they can't afford the property
-                cout << currentPlayer.name << " landed on " << landedTile.name << " but cannot afford it. The property costs $"
-                          << landedTile.price << ", but " << currentPlayer.name << " only has $" << currentPlayer.cash << "." << endl;
-            }
-        } else if (landedTile.owner != &currentPlayer) {
-            // Tile is owned by another player
-
-            int rent = 0;
-
-            // Special case for Utility tiles
-            if (landedTile.type == TileType::UTILITY) {
-                rent = 10 * diceRollResult;  // Rent is 10 times the dice roll result
-            } else {
-                rent = landedTile.calculateRent(diceRollResult);  // Regular rent calculation for Property or Railroad
-            }
-
-            if (currentPlayer.canAfford(rent)) {
-                currentPlayer.subtractCash(rent);
-                landedTile.owner->addCash(rent);
-                cout << currentPlayer.name << " paid $" << rent << " in rent to " << landedTile.owner->name << endl;
-            } else {
-                // Handle bankruptcy due to inability to pay rent
-                handleBankruptcy(currentPlayer, landedTile.owner);  // Pass the owner pointer directly
-                return;  // End turn after handling bankruptcy
-            }
-        }
+        handlePropertyLanding(currentPlayer, landedTile);  // Call handlePropertyLanding
     } 
     // Tax handling
     else if (landedTile.type == TileType::TAX) {
@@ -124,7 +78,6 @@ void Game::takeTurn() {
             currentPlayer.subtractCash(landedTile.price);
             cout << currentPlayer.name << " paid $" << landedTile.price << " in taxes." << endl;
         } else {
-            // Handle bankruptcy due to inability to pay taxes
             handleBankruptcy(currentPlayer, nullptr);  // Bankrupt due to taxes (to the bank)
             return;  // End turn after handling bankruptcy
         }
@@ -141,13 +94,7 @@ void Game::takeTurn() {
     } 
     // Chance handling
     else if (landedTile.type == TileType::CHANCE) {
-        // Pick a random chance card
-        int cardIndex = rand() % chanceCards.size();
-        ChanceCard& card = chanceCards[cardIndex];
-
-        cout << "Chance Card: " << card.description << endl;
-        // Apply the card's effect
-        card.applyEffect(currentPlayer, players, currentPlayerIndex);
+        handleChanceCard(currentPlayer);
     } 
     // Go tile handling
     else if (landedTile.type == TileType::GO) {
@@ -155,9 +102,9 @@ void Game::takeTurn() {
         currentPlayer.addCash(200);
     }
 
-    cout << endl;
     endTurn();
 }
+
 void Game::handleBankruptcy(Player& bankruptPlayer, Player* creditor) {
     cout << bankruptPlayer.name << " is bankrupt!" << endl;
 
@@ -234,44 +181,56 @@ void Game::rollDice() {
 
 void Game::handlePropertyLanding(Player& currentPlayer, Tile& landedTile) {
     if (landedTile.owner == nullptr) {
-        cout << currentPlayer.name << " landed on " << landedTile.name << ". Would you like to buy it for $"
-                  << landedTile.price << "? Press 'y' to buy or 'n' to decline." << endl;
+        // Check if player can afford the property
+        if (currentPlayer.canAfford(landedTile.price)) {
+            cout << currentPlayer.name << " landed on " << landedTile.name << ". Would you like to buy it for $"
+                 << landedTile.price << "? Press 'y' to buy or 'n' to decline." << endl;
 
-        bool decisionMade = false;
-        while (!decisionMade) {
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y)) {
-                currentPlayer.buyProperty(&landedTile);
-                decisionMade = true;
-            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::N)) {
-                cout << currentPlayer.name << " decided not to buy " << landedTile.name << endl;
-                decisionMade = true;
+            bool decisionMade = false;
+            while (!decisionMade) {
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y)) {
+                    // Use buyProperty to handle the purchase
+                    currentPlayer.buyProperty(&landedTile);
+                    decisionMade = true;
+                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::N)) {
+                    cout << currentPlayer.name << " decided not to buy " << landedTile.name << endl;
+                    decisionMade = true;
+                }
             }
+        } else {
+            // Inform the player they can't afford the property
+            cout << currentPlayer.name << " landed on " << landedTile.name << " but cannot afford it. The property costs $"
+                 << landedTile.price << ", but " << currentPlayer.name << " only has $" << currentPlayer.cash << "." << endl;
         }
-    } else if (landedTile.owner == &currentPlayer) {
+    } else if (landedTile.owner == &currentPlayer && landedTile.type == TileType::PROPERTY) {
+        // If the player owns the property, allow them to build houses/hotels
         cout << currentPlayer.name << " landed on their own property: " << landedTile.name
-                  << ". Would you like to build a house or a hotel? Press 'h' for house, 't' for hotel, or 'n' to do nothing." << endl;
+             << ". Would you like to build a house or a hotel? Press 'h' for house, 't' for hotel, or 'n' to do nothing." << endl;
 
         bool decisionMade = false;
         while (!decisionMade) {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::H)) {
-                currentPlayer.buildHouse(&landedTile, board);  // Pass the board to buildHouse
+                currentPlayer.buildHouse(&landedTile, board);  // Build house
                 decisionMade = true;
             } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
-                currentPlayer.buildHotel(&landedTile, board);  // Pass the board to buildHotel
+                currentPlayer.buildHotel(&landedTile, board);  // Build hotel
                 decisionMade = true;
             } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::N)) {
                 cout << currentPlayer.name << " decided not to build anything on " << landedTile.name << endl;
                 decisionMade = true;
             }
         }
-    } else {
-        int rent = landedTile.calculateRent(diceRollResult);
+    } else if (landedTile.owner != &currentPlayer) {
+        // Tile is owned by another player, pay rent
+        int rent = (landedTile.type == TileType::UTILITY) ? 10 * diceRollResult : landedTile.calculateRent(diceRollResult);
+
         if (currentPlayer.canAfford(rent)) {
             currentPlayer.subtractCash(rent);
             landedTile.owner->addCash(rent);
             cout << currentPlayer.name << " paid $" << rent << " in rent to " << landedTile.owner->name << endl;
         } else {
             cout << currentPlayer.name << " cannot afford rent and is bankrupt!" << endl;
+            handleBankruptcy(currentPlayer, landedTile.owner);
         }
     }
 }
