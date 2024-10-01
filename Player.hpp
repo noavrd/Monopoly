@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>  
 #include <vector>
 #include <string>
-#include "Property.hpp"
+#include "Tile.hpp"  
 
 class Player {
 public:
@@ -12,7 +12,7 @@ public:
     bool inJail;
     int jailTurns;
     sf::Color color; 
-    std::vector<Property*> ownedProperties;
+    std::vector<Tile*> ownedTiles;
 
     Player(const std::string& playerName);
 
@@ -20,9 +20,10 @@ public:
     bool subtractCash(int amount);
     void move(int steps);
     bool canAfford(int amount) const;
-    void buyProperty(Property* property);
-    void buildHouse(Property* property);
-    void buildHotel(Property* property);
+    void buyProperty(Tile* property);
+    void buildHouse(Tile* property);
+    void buildHotel(Tile* property);
     void goToJail();
     void getOutOfJail();
+    int getNumberOfTrains() const;
 };

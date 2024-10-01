@@ -31,5 +31,24 @@ void Tile::draw(sf::RenderWindow& window) {
 }
 
 int Tile::calculateRent() const {
-    return price / 10;  // Rent is 10% of the property's price
+    if (this->type == TileType::RAILROAD) {
+        int numberOfTrainsOwned = owner->getNumberOfTrains();
+        switch (numberOfTrainsOwned) {
+            case 1: return 50;
+            case 2: return 100;
+            case 3: return 150;
+            case 4: return 200;
+            default: return 0;
+        }
+    // } else if (hasHotel) {
+    //     return ;
+    // } else if (houses > 0) {
+    //     return rentWithHouse * (1 << (houses - 1));  
+    } else {
+        return price / 10;
+    }
+}
+
+TileType Tile::getType() const {
+    return type;
 }

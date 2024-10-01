@@ -20,22 +20,22 @@ std::vector<ChanceCard> initializeChanceCards() {
             player.goToJail();
             std::cout << player.name << " is sent directly to jail!" << std::endl;
         }},
-        {"Make general repairs on all your property – For each house pay $25 – For each hotel $100", [](Player& player, std::vector<Player>&, int&) {
-            int houseCost = 25;
-            int hotelCost = 100;
-            int totalCost = 0;
-            for (auto& tile : player.ownedProperties) {
-                Property* property = dynamic_cast<Property*>(tile);
-                if (property) {
-                    totalCost += property->houses * houseCost;
-                    if (property->hasHotel) {
-                        totalCost += hotelCost;
-                    }
-                }
-            }
-            player.subtractCash(totalCost);
-            std::cout << player.name << " pays $" << totalCost << " for property repairs!" << std::endl;
-        }},
+        // {"Make general repairs on all your property – For each house pay $25 – For each hotel $100", [](Player& player, std::vector<Player>&, int&) {
+        //     int houseCost = 25;
+        //     int hotelCost = 100;
+        //     int totalCost = 0;
+        //     for (auto& tile : player.ownedTiles) {
+        //         Tile* property = dynamic_cast<Tile*>(tile);
+        //         if (property) {
+        //             totalCost += property->houses * houseCost;
+        //             if (property->hasHotel) {
+        //                 totalCost += hotelCost;
+        //             }
+        //         }
+        //     }
+        //     player.subtractCash(totalCost);
+        //     std::cout << player.name << " pays $" << totalCost << " for property repairs!" << std::endl;
+        // }},
         {"Pay poor tax of $15", [](Player& player, std::vector<Player>&, int&) {
             player.subtractCash(15);
             std::cout << player.name << " pays poor tax of $15!" << std::endl;
@@ -77,21 +77,21 @@ std::vector<ChanceCard> initializeChanceCards() {
             player.position = 11;  // Move to St. Charles Place
             std::cout << player.name << " advances to St. Charles Place!" << std::endl;
         }},
-        {"You are assessed for street repairs – $40 per house, $115 per hotel", [](Player& player, std::vector<Player>&, int&) {
-            int houseCost = 40;
-            int hotelCost = 115;
-            int totalCost = 0;
-            for (auto& tile : player.ownedProperties) {
-                Property* property = dynamic_cast<Property*>(tile);
-                if (property) {
-                    totalCost += property->houses * houseCost;
-                    if (property->hasHotel) {
-                        totalCost += hotelCost;
-                    }
-                }
-            }
-            player.subtractCash(totalCost);
-            std::cout << player.name << " pays $" << totalCost << " for street repairs!" << std::endl;
-        }},
+        // {"You are assessed for street repairs – $40 per house, $115 per hotel", [](Player& player, std::vector<Player>&, int&) {
+        //     int houseCost = 40;
+        //     int hotelCost = 115;
+        //     int totalCost = 0;
+        //     for (auto& tile : player.ownedTiles) {
+        //         Tile* property = dynamic_cast<Tile*>(tile);
+        //         if (property) {
+        //             totalCost += property->houses * houseCost;
+        //             if (property->hasHotel) {
+        //                 totalCost += hotelCost;
+        //             }
+        //         }
+        //     }
+        //     player.subtractCash(totalCost);
+        //     std::cout << player.name << " pays $" << totalCost << " for street repairs!" << std::endl;
+        // }},
     };
 }

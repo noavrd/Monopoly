@@ -7,19 +7,23 @@ enum class TileType {
     PROPERTY, RAILROAD, UTILITY, TAX, GO, JAIL, COMMUNITY_CHEST, CHANCE, FREE_PARKING, GO_TO_JAIL
 };
 
-class Player;  // Forward declaration
+class Player;  
 
 class Tile {
 public:
     std::string name;
     int price;
+    int houses;  
+    bool hasHotel; 
+    int houseCost;  
     TileType type;
     sf::RectangleShape shape;
     sf::Text label;
-    Player* owner;  // Pointer to the player who owns this tile
+    Player* owner;  
 
-    Tile(const std::string& name, int price, TileType type, sf::Vector2f position, sf::Color color, const sf::Font& font);
+    Tile(const std::string& name, int price, TileType type, sf::Vector2f position, sf::Color color, const sf::Font& font, int houseCost);
 
     void draw(sf::RenderWindow& window);
-    int calculateRent() const;  // Method to calculate rent
+    int calculateRent() const;
+    TileType getType() const;
 };

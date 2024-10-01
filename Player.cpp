@@ -28,10 +28,10 @@ bool Player::canAfford(int amount) const {
     return cash >= amount;
 }
 
-void Player::buyProperty(Property* property) {
+void Player::buyProperty(Tile* property) {
     if (canAfford(property->price)) {
         subtractCash(property->price);
-        ownedProperties.push_back(property);
+        ownedTiles.push_back(property);
         property->owner = this;
         std::cout << name << " bought " << property->name << " for $" << property->price << std::endl;
     } else {
@@ -39,7 +39,7 @@ void Player::buyProperty(Property* property) {
     }
 }
 
-void Player::buildHouse(Property* property) {
+void Player::buildHouse(Tile* property) {
     if (property->owner == this && property->houses < 4 && !property->hasHotel && canAfford(property->houseCost)) {
         subtractCash(property->houseCost);
         property->houses++;
@@ -55,7 +55,7 @@ void Player::buildHouse(Property* property) {
     }
 }
 
-void Player::buildHotel(Property* property) {
+void Player::buildHotel(Tile* property) {
     if (property->owner == this && property->houses == 4 && !property->hasHotel && canAfford(property->houseCost)) {
         subtractCash(property->houseCost);  //  hotel cost is the same as a house cost, maybe change it.
         property->houses = 0;  // Reset house count
@@ -82,4 +82,14 @@ void Player::getOutOfJail() {
     inJail = false;
     jailTurns = 0;
     std::cout << name << " has been released from jail!" << std::endl;
+}
+
+int Player::getNumberOfTrains() const {
+    int count = 0;
+    for (const Tile* tile : ownedTiles) { 
+        if (tile->getType() == TileType::RAILROAD) {
+            count++;
+        }
+    }
+    return count;
 }
