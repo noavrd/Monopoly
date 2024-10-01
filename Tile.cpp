@@ -41,9 +41,10 @@ int Tile::calculateRent() const {
             default: return 0;
         }
     } else if (hasHotel) {
-        return price / 5 + 100;  // Example calculation for hotel rent
+        return price / 5 + 100;  // Rent for hotel
     } else if (houses > 0) {
-        return price / 10 + (houses * 50);  // Example rent calculation for houses
+        int baseRent = price / 10;  // Base rent for the property
+        return baseRent * (1 << (houses - 1));  
     } else {
         return price / 10;  // Base rent without houses or hotels
     }
