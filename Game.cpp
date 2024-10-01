@@ -10,10 +10,18 @@
 using namespace std; 
 
 vector<sf::Color> playerColors = {
-    sf::Color::Red, sf::Color::Green, sf::Color::Blue,
-    sf::Color::Yellow, sf::Color::Magenta, sf::Color::Cyan,
-    sf::Color::White, sf::Color::Black
+    sf::Color(218, 165, 32), 
+    sf::Color(135, 206, 250),  
+    sf::Color(144, 238, 144),  
+    sf::Color(255, 228, 196),
+    sf::Color(221, 160, 221),
+    sf::Color(255, 255, 224),
+    sf::Color(172, 238, 238),
+    sf::Color(210, 180, 140)
 };
+
+
+
 
 Game::Game(int numPlayers) : currentPlayerIndex(0), diceRollResult(0), isDoubleRoll(false), consecutiveDoubles(0) {
     srand(time(0));  // Seed for random dice rolls

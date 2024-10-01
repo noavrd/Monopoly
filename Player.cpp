@@ -35,7 +35,7 @@ void Player::buyProperty(Tile* property) {
     if (canAfford(property->price)) {
         subtractCash(property->price);
         ownedTiles.push_back(property);
-        property->setOwner(this);
+        property->setOwner(this);  // Ensure this sets the owner correctly
         cout << name << " bought " << property->name << " for $" << property->price << endl;
     } else {
         cout << name << " cannot afford to buy " << property->name << endl;
@@ -44,14 +44,18 @@ void Player::buyProperty(Tile* property) {
 
 
 bool Player::ownsAllInColorGroup(const vector<Tile*>& colorGroupTiles) const {
+    cout << "Checking ownership for player: " << name << endl;
     for (const Tile* tile : colorGroupTiles) {
+        cout << "Tile: " << tile->name << " owned by: " 
+             << (tile->owner ? tile->owner->name : "None") << endl;
         if (tile->owner != this) {
-            return false;  // Return false as soon as a tile is not owned by the current player
+            cout << name << " does not own " << tile->name << endl;
+            return false;
         }
     }
-    return true;  // All tiles are owned by the player
+    cout << name << " owns all properties in the color group!" << endl;
+    return true;
 }
-
 
 // Helper function to check house distribution
 bool Player::isEvenHouseDistribution(const vector<Tile*>& colorGroupTiles, Tile* targetProperty) const {
