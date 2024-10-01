@@ -7,19 +7,20 @@
 #include <sstream>
 #include <SFML/Graphics.hpp> 
 
+using namespace std; 
 
-std::vector<sf::Color> playerColors = {
+vector<sf::Color> playerColors = {
     sf::Color::Red, sf::Color::Green, sf::Color::Blue,
     sf::Color::Yellow, sf::Color::Magenta, sf::Color::Cyan,
     sf::Color::White, sf::Color::Black
 };
 
 Game::Game(int numPlayers) : currentPlayerIndex(0), diceRollResult(0), isDoubleRoll(false), consecutiveDoubles(0) {
-    std::srand(std::time(0));  // Seed for random dice rolls
+    srand(time(0));  // Seed for random dice rolls
 
     // Initialize players and assign colors
     for (int i = 0; i < numPlayers; ++i) {
-        Player player("Player " + std::to_string(i + 1));
+        Player player("Player " + to_string(i + 1));
         player.color = playerColors[i % playerColors.size()];  
         players.push_back(player);
     }
@@ -34,30 +35,30 @@ void Game::takeTurn() {
     Player& currentPlayer = players[currentPlayerIndex];
 
     // Print current player with the amount of money they have
-    std::cout << "Current player: " << currentPlayer.name << " (Money: $" << currentPlayer.cash << ")" << std::endl;
+    cout << "Current player: " << currentPlayer.name << " (Money: $" << currentPlayer.cash << ")" << endl;
 
     // Jail logic
     if (currentPlayer.inJail) {
-        std::cout << currentPlayer.name << " is in jail." << std::endl;
+        cout << currentPlayer.name << " is in jail." << endl;
 
         // Roll dice to try and get doubles to leave jail
-        int die1 = std::rand() % 6 + 1;
-        int die2 = std::rand() % 6 + 1;
-        std::cout << "Rolling to try to get out of jail: " << die1 << " and " << die2 << std::endl;
+        int die1 = rand() % 6 + 1;
+        int die2 = rand() % 6 + 1;
+        cout << "Rolling to try to get out of jail: " << die1 << " and " << die2 << endl;
 
         if (die1 == die2) {
             currentPlayer.inJail = false;
             currentPlayer.jailTurns = 0;
-            std::cout << currentPlayer.name << " rolled doubles and is out of jail!" << std::endl;
+            cout << currentPlayer.name << " rolled doubles and is out of jail!" << endl;
         } else {
             currentPlayer.decrementJailTurn();
             if (currentPlayer.inJail) {
-                std::cout << currentPlayer.name << " stays in jail for another turn." << std::endl;
-                std::cout << std::endl;  // Empty line after player's turn
+                cout << currentPlayer.name << " stays in jail for another turn." << endl;
+                cout << endl;  // Empty line after player's turn
                 endTurn();
                 return;
             } else {
-                std::cout << currentPlayer.name << " has completed their time in jail and is now out!" << std::endl;
+                cout << currentPlayer.name << " has completed their time in jail and is now out!" << endl;
             }
         }
     }
@@ -73,8 +74,8 @@ void Game::takeTurn() {
         if (landedTile.owner == nullptr) {
             // Check if player can afford the property
             if (currentPlayer.canAfford(landedTile.price)) {
-                std::cout << currentPlayer.name << " landed on " << landedTile.name << ". Would you like to buy it for $"
-                          << landedTile.price << "? Press 'y' to buy or 'n' to decline." << std::endl;
+                cout << currentPlayer.name << " landed on " << landedTile.name << ". Would you like to buy it for $"
+                          << landedTile.price << "? Press 'y' to buy or 'n' to decline." << endl;
 
                 bool decisionMade = false;
                 while (!decisionMade) {
@@ -82,17 +83,17 @@ void Game::takeTurn() {
                         currentPlayer.subtractCash(landedTile.price);
                         landedTile.owner = &currentPlayer;
                         currentPlayer.ownedTiles.push_back(&landedTile);
-                        std::cout << currentPlayer.name << " bought " << landedTile.name << " for $" << landedTile.price << std::endl;
+                        cout << currentPlayer.name << " bought " << landedTile.name << " for $" << landedTile.price << endl;
                         decisionMade = true;
                     } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::N)) {
-                        std::cout << currentPlayer.name << " decided not to buy " << landedTile.name << std::endl;
+                        cout << currentPlayer.name << " decided not to buy " << landedTile.name << endl;
                         decisionMade = true;
                     }
                 }
             } else {
                 // Inform the player they can't afford the property
-                std::cout << currentPlayer.name << " landed on " << landedTile.name << " but cannot afford it. The property costs $"
-                          << landedTile.price << ", but " << currentPlayer.name << " only has $" << currentPlayer.cash << "." << std::endl;
+                cout << currentPlayer.name << " landed on " << landedTile.name << " but cannot afford it. The property costs $"
+                          << landedTile.price << ", but " << currentPlayer.name << " only has $" << currentPlayer.cash << "." << endl;
             }
         } else if (landedTile.owner != &currentPlayer) {
             // Tile is owned by another player
@@ -109,7 +110,7 @@ void Game::takeTurn() {
             if (currentPlayer.canAfford(rent)) {
                 currentPlayer.subtractCash(rent);
                 landedTile.owner->addCash(rent);
-                std::cout << currentPlayer.name << " paid $" << rent << " in rent to " << landedTile.owner->name << std::endl;
+                cout << currentPlayer.name << " paid $" << rent << " in rent to " << landedTile.owner->name << endl;
             } else {
                 // Handle bankruptcy due to inability to pay rent
                 handleBankruptcy(currentPlayer, landedTile.owner);  // Pass the owner pointer directly
@@ -121,7 +122,7 @@ void Game::takeTurn() {
     else if (landedTile.type == TileType::TAX) {
         if (currentPlayer.canAfford(landedTile.price)) {
             currentPlayer.subtractCash(landedTile.price);
-            std::cout << currentPlayer.name << " paid $" << landedTile.price << " in taxes." << std::endl;
+            cout << currentPlayer.name << " paid $" << landedTile.price << " in taxes." << endl;
         } else {
             // Handle bankruptcy due to inability to pay taxes
             handleBankruptcy(currentPlayer, nullptr);  // Bankrupt due to taxes (to the bank)
@@ -132,36 +133,36 @@ void Game::takeTurn() {
     else if (landedTile.type == TileType::GO_TO_JAIL) {
         currentPlayer.goToJail();
         board.updatePlayerPosition(currentPlayer, currentPlayerIndex);
-        std::cout << currentPlayer.name << " has been sent to jail!" << std::endl;
+        cout << currentPlayer.name << " has been sent to jail!" << endl;
     } 
     // Free Parking handling
     else if (landedTile.type == TileType::FREE_PARKING) {
-        std::cout << currentPlayer.name << " is resting at Free Parking." << std::endl;
+        cout << currentPlayer.name << " is resting at Free Parking." << endl;
     } 
     // Chance handling
     else if (landedTile.type == TileType::CHANCE) {
         // Pick a random chance card
-        int cardIndex = std::rand() % chanceCards.size();
+        int cardIndex = rand() % chanceCards.size();
         ChanceCard& card = chanceCards[cardIndex];
 
-        std::cout << "Chance Card: " << card.description << std::endl;
+        cout << "Chance Card: " << card.description << endl;
         // Apply the card's effect
         card.applyEffect(currentPlayer, players, currentPlayerIndex);
     } 
     // Go tile handling
     else if (landedTile.type == TileType::GO) {
-        std::cout << currentPlayer.name << " landed on GO! Collect $200." << std::endl;
+        cout << currentPlayer.name << " landed on GO! Collect $200." << endl;
         currentPlayer.addCash(200);
     }
 
-    std::cout << std::endl;
+    cout << endl;
     endTurn();
 }
 void Game::handleBankruptcy(Player& bankruptPlayer, Player* creditor) {
-    std::cout << bankruptPlayer.name << " is bankrupt!" << std::endl;
+    cout << bankruptPlayer.name << " is bankrupt!" << endl;
 
     if (creditor) {
-        std::cout << "All assets are transferred to " << creditor->name << std::endl;
+        cout << "All assets are transferred to " << creditor->name << endl;
         creditor->cash += bankruptPlayer.cash;
         bankruptPlayer.cash = 0;
 
@@ -174,7 +175,7 @@ void Game::handleBankruptcy(Player& bankruptPlayer, Player* creditor) {
 
     } else {
         // Bankruptcy to the bank
-        std::cout << "All properties are returned to the bank." << std::endl;
+        cout << "All properties are returned to the bank." << endl;
         bankruptPlayer.cash = 0;
 
         // Release all properties to no owner
@@ -185,26 +186,26 @@ void Game::handleBankruptcy(Player& bankruptPlayer, Player* creditor) {
     }
 
     // Remove bankrupt player from the game
-    auto it = std::find(players.begin(), players.end(), bankruptPlayer);
+    auto it = find(players.begin(), players.end(), bankruptPlayer);
     if (it != players.end()) {
         players.erase(it);
     }
 
-    std::cout << bankruptPlayer.name << " is removed from the game." << std::endl;
+    cout << bankruptPlayer.name << " is removed from the game." << endl;
 
     if (isGameOver()) {
-        std::cout << "The game is over!" << std::endl;
+        cout << "The game is over!" << endl;
     }
 }
 
 void Game::rollDice() {
     // Roll two dice
-    int die1 = std::rand() % 6 + 1;
-    int die2 = std::rand() % 6 + 1;
+    int die1 = rand() % 6 + 1;
+    int die2 = rand() % 6 + 1;
     diceRollResult = die1 + die2;
 
     // Print the dice roll result
-    std::cout << players[currentPlayerIndex].name << " rolled " << die1 << " and " << die2 << " (" << diceRollResult << ")" << std::endl;
+    cout << players[currentPlayerIndex].name << " rolled " << die1 << " and " << die2 << " (" << diceRollResult << ")" << endl;
 
     // Check for doubles
     if (die1 == die2) {
@@ -213,7 +214,7 @@ void Game::rollDice() {
         if (consecutiveDoubles == 3) {
             players[currentPlayerIndex].goToJail();
             board.updatePlayerPosition(players[currentPlayerIndex], currentPlayerIndex);
-            std::cout << players[currentPlayerIndex].name << " rolled doubles three times and is sent to Jail!" << std::endl;
+            cout << players[currentPlayerIndex].name << " rolled doubles three times and is sent to Jail!" << endl;
             endTurn();
             return;
         }
@@ -227,14 +228,14 @@ void Game::rollDice() {
     // Handle passing GO and collecting $200
     if (players[currentPlayerIndex].position < diceRollResult) {
         players[currentPlayerIndex].addCash(200);
-        std::cout << players[currentPlayerIndex].name << " passed GO! Collect $200" << std::endl;
+        cout << players[currentPlayerIndex].name << " passed GO! Collect $200" << endl;
     }
 }
 
 void Game::handlePropertyLanding(Player& currentPlayer, Tile& landedTile) {
     if (landedTile.owner == nullptr) {
-        std::cout << currentPlayer.name << " landed on " << landedTile.name << ". Would you like to buy it for $"
-                  << landedTile.price << "? Press 'y' to buy or 'n' to decline." << std::endl;
+        cout << currentPlayer.name << " landed on " << landedTile.name << ". Would you like to buy it for $"
+                  << landedTile.price << "? Press 'y' to buy or 'n' to decline." << endl;
 
         bool decisionMade = false;
         while (!decisionMade) {
@@ -242,13 +243,13 @@ void Game::handlePropertyLanding(Player& currentPlayer, Tile& landedTile) {
                 currentPlayer.buyProperty(&landedTile);
                 decisionMade = true;
             } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::N)) {
-                std::cout << currentPlayer.name << " decided not to buy " << landedTile.name << std::endl;
+                cout << currentPlayer.name << " decided not to buy " << landedTile.name << endl;
                 decisionMade = true;
             }
         }
     } else if (landedTile.owner == &currentPlayer) {
-        std::cout << currentPlayer.name << " landed on their own property: " << landedTile.name
-                  << ". Would you like to build a house or a hotel? Press 'h' for house, 't' for hotel, or 'n' to do nothing." << std::endl;
+        cout << currentPlayer.name << " landed on their own property: " << landedTile.name
+                  << ". Would you like to build a house or a hotel? Press 'h' for house, 't' for hotel, or 'n' to do nothing." << endl;
 
         bool decisionMade = false;
         while (!decisionMade) {
@@ -259,7 +260,7 @@ void Game::handlePropertyLanding(Player& currentPlayer, Tile& landedTile) {
                 currentPlayer.buildHotel(&landedTile, board);  // Pass the board to buildHotel
                 decisionMade = true;
             } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::N)) {
-                std::cout << currentPlayer.name << " decided not to build anything on " << landedTile.name << std::endl;
+                cout << currentPlayer.name << " decided not to build anything on " << landedTile.name << endl;
                 decisionMade = true;
             }
         }
@@ -268,9 +269,9 @@ void Game::handlePropertyLanding(Player& currentPlayer, Tile& landedTile) {
         if (currentPlayer.canAfford(rent)) {
             currentPlayer.subtractCash(rent);
             landedTile.owner->addCash(rent);
-            std::cout << currentPlayer.name << " paid $" << rent << " in rent to " << landedTile.owner->name << std::endl;
+            cout << currentPlayer.name << " paid $" << rent << " in rent to " << landedTile.owner->name << endl;
         } else {
-            std::cout << currentPlayer.name << " cannot afford rent and is bankrupt!" << std::endl;
+            cout << currentPlayer.name << " cannot afford rent and is bankrupt!" << endl;
         }
     }
 }
@@ -278,10 +279,10 @@ void Game::handlePropertyLanding(Player& currentPlayer, Tile& landedTile) {
 
 void Game::handleChanceCard(Player& currentPlayer) {
     // Pick a random chance card
-    int cardIndex = std::rand() % chanceCards.size();
+    int cardIndex = rand() % chanceCards.size();
     ChanceCard& card = chanceCards[cardIndex];
 
-    std::cout << "Chance Card: " << card.description << std::endl;
+    cout << "Chance Card: " << card.description << endl;
     // Apply the card's effect
     card.applyEffect(currentPlayer, players, currentPlayerIndex);
 }
@@ -291,7 +292,7 @@ void Game::endTurn() {
     if (!isDoubleRoll) {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();  // Move to the next player
     } else {
-         std::cout << players[currentPlayerIndex].name << " rolled doubles! Take another turn." << std::endl;
+         cout << players[currentPlayerIndex].name << " rolled doubles! Take another turn." << endl;
 
     }
     isDoubleRoll = false;

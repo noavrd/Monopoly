@@ -1,38 +1,40 @@
 #include "ChanceCard.hpp"
 #include <iostream>
 
-std::vector<ChanceCard> initializeChanceCards() {
+using namespace std;
+
+vector<ChanceCard> initializeChanceCards() {
     return {
-        {"Advance to Go (Collect $200)", [](Player& player, std::vector<Player>&, int&) {
+        {"Advance to Go (Collect $200)", [](Player& player, vector<Player>&, int&) {
             player.position = 0;  // Go to "Go"
             player.addCash(200);
-            std::cout << player.name << " advances to Go and collects $200!" << std::endl;
+            cout << player.name << " advances to Go and collects $200!" << endl;
         }},
-        {"Bank pays you dividend of $50", [](Player& player, std::vector<Player>&, int&) {
+        {"Bank pays you dividend of $50", [](Player& player, vector<Player>&, int&) {
             player.addCash(50);
-            std::cout << player.name << " receives $50 dividend from the bank!" << std::endl;
+            cout << player.name << " receives $50 dividend from the bank!" << endl;
         }},
-        {"Go back 3 spaces", [](Player& player, std::vector<Player>&, int&) {
+        {"Go back 3 spaces", [](Player& player, vector<Player>&, int&) {
             player.move(-3);  // Move back 3 spaces
-            std::cout << player.name << " goes back 3 spaces!" << std::endl;
+            cout << player.name << " goes back 3 spaces!" << endl;
         }},
-        {"Go directly to Jail – do not pass Go, do not collect $200", [](Player& player, std::vector<Player>&, int&) {
+        {"Go directly to Jail – do not pass Go, do not collect $200", [](Player& player, vector<Player>&, int&) {
             player.goToJail();
         }},
-        {"Pay poor tax of $15", [](Player& player, std::vector<Player>&, int&) {
+        {"Pay poor tax of $15", [](Player& player, vector<Player>&, int&) {
             player.subtractCash(15);
-            std::cout << player.name << " pays poor tax of $15!" << std::endl;
+            cout << player.name << " pays poor tax of $15!" << endl;
         }},
-        {"Take a trip to Reading Railroad – If you pass Go collect $200", [](Player& player, std::vector<Player>&, int&) {
+        {"Take a trip to Reading Railroad – If you pass Go collect $200", [](Player& player, vector<Player>&, int&) {
             if (player.position > 5) player.addCash(200);  // Pass Go
             player.position = 5;  // Go to Reading Railroad
-            std::cout << player.name << " takes a trip to Reading Railroad!" << std::endl;
+            cout << player.name << " takes a trip to Reading Railroad!" << endl;
         }},
-        {"Take a walk on the Boardwalk – Advance token to Boardwalk", [](Player& player, std::vector<Player>&, int&) {
+        {"Take a walk on the Boardwalk – Advance token to Boardwalk", [](Player& player, vector<Player>&, int&) {
             player.position = 39;  // Move to Boardwalk
-            std::cout << player.name << " advances to Boardwalk!" << std::endl;
+            cout << player.name << " advances to Boardwalk!" << endl;
         }},
-        {"You have been elected Chairman of the Board – Pay each player $50", [](Player& player, std::vector<Player>& players, int&) {
+        {"You have been elected Chairman of the Board – Pay each player $50", [](Player& player, vector<Player>& players, int&) {
             int totalCost = 50 * (players.size() - 1);  // Pay each player $50
             player.subtractCash(totalCost);
             for (auto& otherPlayer : players) {
@@ -40,27 +42,27 @@ std::vector<ChanceCard> initializeChanceCards() {
                     otherPlayer.addCash(50);
                 }
             }
-            std::cout << player.name << " pays $50 to each player!" << std::endl;
+            cout << player.name << " pays $50 to each player!" << endl;
         }},
-        {"Your building loan matures – Collect $150", [](Player& player, std::vector<Player>&, int&) {
+        {"Your building loan matures – Collect $150", [](Player& player, vector<Player>&, int&) {
             player.addCash(150);
-            std::cout << player.name << " collects $150!" << std::endl;
+            cout << player.name << " collects $150!" << endl;
         }},
-        {"Get out of Jail Free – This card may be kept until needed or traded", [](Player& player, std::vector<Player>&, int&) {
+        {"Get out of Jail Free – This card may be kept until needed or traded", [](Player& player, vector<Player>&, int&) {
             player.hasGetOutOfJailCard = true;
-            std::cout << player.name << " receives a Get Out of Jail Free card!" << std::endl;
+            cout << player.name << " receives a Get Out of Jail Free card!" << endl;
         }},
-        {"Advance to Illinois Ave. – If you pass Go, collect $200", [](Player& player, std::vector<Player>&, int&) {
+        {"Advance to Illinois Ave. – If you pass Go, collect $200", [](Player& player, vector<Player>&, int&) {
             if (player.position > 24) player.addCash(200);  // Pass Go
             player.position = 24;  // Move to Illinois Ave.
-            std::cout << player.name << " advances to Illinois Ave!" << std::endl;
+            cout << player.name << " advances to Illinois Ave!" << endl;
         }},
-        {"Advance to St. Charles Place – If you pass Go, collect $200", [](Player& player, std::vector<Player>&, int&) {
+        {"Advance to St. Charles Place – If you pass Go, collect $200", [](Player& player, vector<Player>&, int&) {
             if (player.position > 11) player.addCash(200);  // Pass Go
             player.position = 11;  // Move to St. Charles Place
-            std::cout << player.name << " advances to St. Charles Place!" << std::endl;
+            cout << player.name << " advances to St. Charles Place!" << endl;
         }},
-        {"You are assessed for street repairs – $40 per house, $115 per hotel", [](Player& player, std::vector<Player>&, int&) {
+        {"You are assessed for street repairs – $40 per house, $115 per hotel", [](Player& player, vector<Player>&, int&) {
             int houseCost = 40;
             int hotelCost = 115;
             int totalCost = 0;
@@ -74,7 +76,7 @@ std::vector<ChanceCard> initializeChanceCards() {
                 }
             }
             player.subtractCash(totalCost);
-            std::cout << player.name << " pays $" << totalCost << " for street repairs!" << std::endl;
+            cout << player.name << " pays $" << totalCost << " for street repairs!" << endl;
         }},
     };
 }

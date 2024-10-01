@@ -2,13 +2,15 @@
 #include "Game.hpp"
 #include <iostream>
 
+using namespace std;
+
 int main() {
     int numPlayers;
-    std::cout << "Enter number of players (2-8): ";
-    std::cin >> numPlayers;
+    cout << "Enter number of players (2-8): ";
+    cin >> numPlayers;
 
     if (numPlayers < 2 || numPlayers > 8) {
-        std::cout << "Invalid number of players!" << std::endl;
+        cout << "Invalid number of players!" << endl;
         return 1;
     }
 
@@ -41,7 +43,7 @@ int main() {
 
         // Check for the game over condition
         if (game.isGameOver()) {
-            std::cout << "Game Over!" << std::endl;
+            cout << "Game Over!" << endl;
             window.close();
         }
     }

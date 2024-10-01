@@ -1,10 +1,12 @@
 #include "Board.hpp"
 #include <iostream>
 
+using namespace std;
+
 Board::Board() {
     // Load the Arial font
     if (!font.loadFromFile("/usr/share/fonts/truetype/msttcorefonts/Arial.ttf")) {
-        std::cerr << "Error loading font" << std::endl;
+        cerr << "Error loading font" << endl;
     }
 
     initializeBoard();
@@ -83,13 +85,13 @@ void Board::initializeBoard() {
     createTile("GO", 0, TileType::GO, ColorGroup::NONE, {10 * tileSize, 10 * tileSize}, sf::Color::Green, 0);
 }
 
-void Board::createTile(const std::string& name, int price, TileType type, ColorGroup colorGroup, sf::Vector2f position, sf::Color color, int houseCost) {
+void Board::createTile(const string& name, int price, TileType type, ColorGroup colorGroup, sf::Vector2f position, sf::Color color, int houseCost) {
     Tile tile(name, price, type, colorGroup, position, color, font, houseCost);
     tiles.push_back(tile);
 }
 
-std::vector<Tile*> Board::getTilesInColorGroup(Tile* property) {
-    std::vector<Tile*> colorGroupTiles;
+vector<Tile*> Board::getTilesInColorGroup(Tile* property) {
+    vector<Tile*> colorGroupTiles;
     
     for (Tile& tile : tiles) {
         if (tile.colorGroup == property->colorGroup) {
@@ -101,7 +103,7 @@ std::vector<Tile*> Board::getTilesInColorGroup(Tile* property) {
 }
 
 
-void Board::draw(sf::RenderWindow& window, const std::vector<Player>& players) {
+void Board::draw(sf::RenderWindow& window, const vector<Player>& players) {
     // Draw the board (tiles, etc.)
     for (Tile& tile : tiles) {
         tile.draw(window);
@@ -128,7 +130,7 @@ void Board::draw(sf::RenderWindow& window, const std::vector<Player>& players) {
         // Create a text to show the player number
         sf::Text playerNumber;
         playerNumber.setFont(font); 
-        playerNumber.setString(std::to_string(i + 1));  
+        playerNumber.setString(to_string(i + 1));  
         playerNumber.setCharacterSize(14); 
         playerNumber.setFillColor(sf::Color::Black);
 

@@ -1,6 +1,8 @@
 #include "Tile.hpp"
 #include "Player.hpp"
 
+using namespace std; 
+
 Tile::Tile(const std::string& name, int price, TileType type, ColorGroup colorGroup, sf::Vector2f position, sf::Color color, const sf::Font& font, int houseCost)
     : name(name), price(price), type(type), colorGroup(colorGroup), houseCost(houseCost), houses(0), hasHotel(false), owner(nullptr) {  
     shape.setSize({ 60.0f, 60.0f });

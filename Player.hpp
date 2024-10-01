@@ -34,5 +34,9 @@ public:
 
     bool operator==(const Player& other) const {
         return name == other.name;
-    } 
+    }
+
+private:
+    bool ownsAllInColorGroup(const std::vector<Tile*>& colorGroupTiles) const;
+    bool isEvenHouseDistribution(const std::vector<Tile*>& colorGroupTiles, Tile* targetProperty) const;
 };
