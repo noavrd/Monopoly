@@ -30,8 +30,13 @@ void Tile::draw(sf::RenderWindow& window) {
     window.draw(label);
 }
 
-int Tile::calculateRent() const {
-    if (type == TileType::RAILROAD) {
+int Tile::calculateRent(int diceRollResult) const {
+    // Utility Rent Logic
+    if (type == TileType::UTILITY) {
+        // Rent is 10 times the dice roll if owned by another player
+        return 10 * diceRollResult;
+    } else if (type == TileType::RAILROAD) {
+        // Railroad rent logic as before
         int numberOfTrainsOwned = owner->getNumberOfTrains();
         switch (numberOfTrainsOwned) {
             case 1: return 50;

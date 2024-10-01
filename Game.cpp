@@ -96,7 +96,16 @@ void Game::takeTurn() {
             }
         } else if (landedTile.owner != &currentPlayer) {
             // Tile is owned by another player
-            int rent = landedTile.calculateRent();
+
+            int rent = 0;
+
+            // Special case for Utility tiles
+            if (landedTile.type == TileType::UTILITY) {
+                rent = 10 * diceRollResult;  // Rent is 10 times the dice roll result
+            } else {
+                rent = landedTile.calculateRent(diceRollResult);  // Regular rent calculation for Property or Railroad
+            }
+
             if (currentPlayer.canAfford(rent)) {
                 currentPlayer.subtractCash(rent);
                 landedTile.owner->addCash(rent);
@@ -148,8 +157,6 @@ void Game::takeTurn() {
     std::cout << std::endl;
     endTurn();
 }
-
-
 void Game::handleBankruptcy(Player& bankruptPlayer, Player* creditor) {
     std::cout << bankruptPlayer.name << " is bankrupt!" << std::endl;
 
@@ -257,7 +264,7 @@ void Game::handlePropertyLanding(Player& currentPlayer, Tile& landedTile) {
             }
         }
     } else {
-        int rent = landedTile.calculateRent();
+        int rent = landedTile.calculateRent(diceRollResult);
         if (currentPlayer.canAfford(rent)) {
             currentPlayer.subtractCash(rent);
             landedTile.owner->addCash(rent);
