@@ -8,13 +8,13 @@
 class Game {
 public:
     Game(int numPlayers);
-    void takeTurn();
+    void takeTurn(sf::RenderWindow& window);
     void rollDice();
-    void endTurn();
+    void endTurn(sf::RenderWindow& window);
     bool isGameOver() const;
     void updateGraphics(sf::RenderWindow& window);
-    void handleBankruptcy(Player& bankruptPlayer, Player* creditor);
-    void handlePropertyLanding(Player& currentPlayer, Tile& landedTile);
+    void handleBankruptcy(Player& bankruptPlayer, Player* creditor, sf::RenderWindow& window);
+    void handlePropertyLanding(Player& currentPlayer, Tile& landedTile, sf::RenderWindow& window);
     void handleChanceCard(Player& currentPlayer);
 
 private:

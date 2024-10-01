@@ -31,7 +31,7 @@ Game::Game(int numPlayers) : currentPlayerIndex(0), diceRollResult(0), isDoubleR
     board.initializeBoard();
 }
 
-void Game::takeTurn() {
+void Game::takeTurn(sf::RenderWindow& window) {
     Player& currentPlayer = players[currentPlayerIndex];
 
     // Print current player with the amount of money they have
@@ -54,7 +54,8 @@ void Game::takeTurn() {
             currentPlayer.decrementJailTurn();
             if (currentPlayer.inJail) {
                 cout << currentPlayer.name << " stays in jail for another turn." << endl;
-                endTurn();
+                updateGraphics(window);
+                endTurn(window);
                 return;
             } else {
                 cout << currentPlayer.name << " has completed their time in jail and is now out!" << endl;
@@ -66,11 +67,14 @@ void Game::takeTurn() {
     rollDice();
     board.updatePlayerPosition(currentPlayer, currentPlayerIndex);
 
+    // Update graphics after rolling dice and moving player
+    updateGraphics(window);
+
     Tile& landedTile = board.tiles[currentPlayer.position];
 
     // Property, Railroad, or Utility handling
     if (landedTile.type == TileType::PROPERTY || landedTile.type == TileType::RAILROAD || landedTile.type == TileType::UTILITY) {
-        handlePropertyLanding(currentPlayer, landedTile);  // Call handlePropertyLanding
+        handlePropertyLanding(currentPlayer, landedTile, window);  // Call handlePropertyLanding with window for graphics update
     } 
     // Tax handling
     else if (landedTile.type == TileType::TAX) {
@@ -78,7 +82,7 @@ void Game::takeTurn() {
             currentPlayer.subtractCash(landedTile.price);
             cout << currentPlayer.name << " paid $" << landedTile.price << " in taxes." << endl;
         } else {
-            handleBankruptcy(currentPlayer, nullptr);  // Bankrupt due to taxes (to the bank)
+            handleBankruptcy(currentPlayer, nullptr, window);  // Bankrupt due to taxes (to the bank)
             return;  // End turn after handling bankruptcy
         }
     } 
@@ -102,10 +106,11 @@ void Game::takeTurn() {
         currentPlayer.addCash(200);
     }
 
-    endTurn();
+    updateGraphics(window);  // Update the graphics after handling the tile action
+    endTurn(window);  // Pass window to endTurn for graphical updates
 }
 
-void Game::handleBankruptcy(Player& bankruptPlayer, Player* creditor) {
+void Game::handleBankruptcy(Player& bankruptPlayer, Player* creditor, sf::RenderWindow& window) {
     cout << bankruptPlayer.name << " is bankrupt!" << endl;
 
     if (creditor) {
@@ -143,43 +148,12 @@ void Game::handleBankruptcy(Player& bankruptPlayer, Player* creditor) {
     if (isGameOver()) {
         cout << "The game is over!" << endl;
     }
+
+    // Update graphics after handling bankruptcy
+    updateGraphics(window);
 }
 
-void Game::rollDice() {
-    // Roll two dice
-    int die1 = rand() % 6 + 1;
-    int die2 = rand() % 6 + 1;
-    diceRollResult = die1 + die2;
-
-    // Print the dice roll result
-    cout << players[currentPlayerIndex].name << " rolled " << die1 << " and " << die2 << " (" << diceRollResult << ")" << endl;
-
-    // Check for doubles
-    if (die1 == die2) {
-        isDoubleRoll = true;
-        consecutiveDoubles++;
-        if (consecutiveDoubles == 3) {
-            players[currentPlayerIndex].goToJail();
-            board.updatePlayerPosition(players[currentPlayerIndex], currentPlayerIndex);
-            cout << players[currentPlayerIndex].name << " rolled doubles three times and is sent to Jail!" << endl;
-            endTurn();
-            return;
-        }
-    } else {
-        isDoubleRoll = false;
-        consecutiveDoubles = 0;
-    }
-
-    players[currentPlayerIndex].move(diceRollResult);
-
-    // Handle passing GO and collecting $200
-    if (players[currentPlayerIndex].position < diceRollResult) {
-        players[currentPlayerIndex].addCash(200);
-        cout << players[currentPlayerIndex].name << " passed GO! Collect $200" << endl;
-    }
-}
-
-void Game::handlePropertyLanding(Player& currentPlayer, Tile& landedTile) {
+void Game::handlePropertyLanding(Player& currentPlayer, Tile& landedTile, sf::RenderWindow& window) {
     if (landedTile.owner == nullptr) {
         // Check if player can afford the property
         if (currentPlayer.canAfford(landedTile.price)) {
@@ -191,6 +165,7 @@ void Game::handlePropertyLanding(Player& currentPlayer, Tile& landedTile) {
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y)) {
                     // Use buyProperty to handle the purchase
                     currentPlayer.buyProperty(&landedTile);
+                    updateGraphics(window);  // Update the graphics after the purchase
                     decisionMade = true;
                 } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::N)) {
                     cout << currentPlayer.name << " decided not to buy " << landedTile.name << endl;
@@ -211,9 +186,11 @@ void Game::handlePropertyLanding(Player& currentPlayer, Tile& landedTile) {
         while (!decisionMade) {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::H)) {
                 currentPlayer.buildHouse(&landedTile, board);  // Build house
+                updateGraphics(window);  // Update the graphics after building a house
                 decisionMade = true;
             } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
                 currentPlayer.buildHotel(&landedTile, board);  // Build hotel
+                updateGraphics(window);  // Update the graphics after building a hotel
                 decisionMade = true;
             } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::N)) {
                 cout << currentPlayer.name << " decided not to build anything on " << landedTile.name << endl;
@@ -230,11 +207,45 @@ void Game::handlePropertyLanding(Player& currentPlayer, Tile& landedTile) {
             cout << currentPlayer.name << " paid $" << rent << " in rent to " << landedTile.owner->name << endl;
         } else {
             cout << currentPlayer.name << " cannot afford rent and is bankrupt!" << endl;
-            handleBankruptcy(currentPlayer, landedTile.owner);
+            handleBankruptcy(currentPlayer, landedTile.owner, window);
         }
     }
+
+    // Ensure graphics update after all actions on property
+    updateGraphics(window);
 }
 
+void Game::rollDice() {
+    // Roll two dice
+    int die1 = rand() % 6 + 1;
+    int die2 = rand() % 6 + 1;
+    diceRollResult = die1 + die2;
+
+    // Print the dice roll result
+    cout << players[currentPlayerIndex].name << " rolled " << die1 << " and " << die2 << " (" << diceRollResult << ")" << endl;
+
+    // Check for doubles
+    if (die1 == die2) {
+        isDoubleRoll = true;
+        consecutiveDoubles++;
+        if (consecutiveDoubles == 3) {
+            players[currentPlayerIndex].goToJail();
+            board.updatePlayerPosition(players[currentPlayerIndex], currentPlayerIndex);
+            cout << players[currentPlayerIndex].name << " rolled doubles three times and is sent to Jail!" << endl;
+        }
+    } else {
+        isDoubleRoll = false;
+        consecutiveDoubles = 0;
+    }
+
+    players[currentPlayerIndex].move(diceRollResult);
+
+    // Handle passing GO and collecting $200
+    if (players[currentPlayerIndex].position < diceRollResult) {
+        players[currentPlayerIndex].addCash(200);
+        cout << players[currentPlayerIndex].name << " passed GO! Collect $200" << endl;
+    }
+}
 
 void Game::handleChanceCard(Player& currentPlayer) {
     // Pick a random chance card
@@ -246,16 +257,17 @@ void Game::handleChanceCard(Player& currentPlayer) {
     card.applyEffect(currentPlayer, players, currentPlayerIndex);
 }
 
-
-void Game::endTurn() {
+void Game::endTurn(sf::RenderWindow& window) {
     if (!isDoubleRoll) {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();  // Move to the next player
     } else {
-         cout << players[currentPlayerIndex].name << " rolled doubles! Take another turn." << endl;
-
+        cout << players[currentPlayerIndex].name << " rolled doubles! Take another turn." << endl;
     }
     isDoubleRoll = false;
     consecutiveDoubles = 0;
+
+    // Ensure graphics update after ending the turn
+    updateGraphics(window);
 }
 
 bool Game::isGameOver() const {

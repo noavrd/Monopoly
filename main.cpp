@@ -29,7 +29,7 @@ int main() {
 
         // Handle spacebar input for rolling dice and taking turns
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !turnTaken) {
-            game.takeTurn();  // Only the current player will take their turn
+            game.takeTurn(window);  // Only the current player will take their turn
             turnTaken = true;  // Mark that the turn has been taken
         }
 
