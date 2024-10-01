@@ -118,7 +118,6 @@ void Player::goToJail() {
     inJail = true;
     jailTurns = 3;  
     position = 10;  
-    std::cout << name << " has been sent to jail!" << std::endl;
 }
 
 void Player::tryExitJail() {

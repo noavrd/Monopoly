@@ -18,7 +18,6 @@ std::vector<ChanceCard> initializeChanceCards() {
         }},
         {"Go directly to Jail – do not pass Go, do not collect $200", [](Player& player, std::vector<Player>&, int&) {
             player.goToJail();
-            std::cout << player.name << " is sent directly to jail!" << std::endl;
         }},
         {"Pay poor tax of $15", [](Player& player, std::vector<Player>&, int&) {
             player.subtractCash(15);
