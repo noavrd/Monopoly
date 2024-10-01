@@ -6,7 +6,7 @@ using namespace std;
 
 Tile::Tile(const string& name, int price, TileType type, ColorGroup colorGroup, sf::Vector2f position, sf::Color color, const sf::Font& font, int houseCost)
     : name(name), price(price), type(type), colorGroup(colorGroup), houseCost(houseCost), houses(0), hasHotel(false), owner(nullptr), font(font), position(position) {  
-    shape.setSize({ 60.0f, 60.0f });
+    shape.setSize({ 80.0f, 80.0f });
     shape.setFillColor(color);
     shape.setPosition(position);
 
@@ -19,36 +19,59 @@ Tile::Tile(const string& name, int price, TileType type, ColorGroup colorGroup, 
 }
 
 void Tile::draw(sf::RenderWindow& window) {
-    // Draw the tile first
-    window.draw(shape);
-
-    // Then draw the label on top of it
-    window.draw(label);
+    window.draw(shape);       // Draw the tile
+    window.draw(label);       // Draw the tile's name
+    if (!ownerLabel.getString().isEmpty()) {
+        window.draw(ownerLabel);  // Draw the owner's name if set
+    }
 }
 
 void Tile::setOwner(Player* newOwner) {
     owner = newOwner;
 
-    // Update the label content to reflect the new owner
-    updateLabel();
+    if (owner) {
+        ownerLabel.setFont(font);  // Ensure we use the correct font
+        ownerLabel.setString(owner->name);  // Set the label to the player's name
+        ownerLabel.setCharacterSize(10);  // Set the size of the text
+        ownerLabel.setFillColor(sf::Color::Black);  // Set the text color
 
-    // Debugging information
-    cout << "Tile: " << name << " now owned by: " << (owner ? owner->name : "None") << endl;
+        // Determine the label position based on the tile's position on the board
+        if (position.y == 0) {
+            // Top row: place below the tile
+            ownerLabel.setPosition(shape.getPosition().x + (shape.getSize().x - ownerLabel.getLocalBounds().width) / 2,
+                                   shape.getPosition().y + shape.getSize().y + 5);
+        } else if (position.x == 0) {
+            // Left column: place to the right of the tile
+            ownerLabel.setPosition(shape.getPosition().x + shape.getSize().x + 5,
+                                   shape.getPosition().y + (shape.getSize().y - ownerLabel.getLocalBounds().height) / 2);
+        } else if (position.y == 10 * 80.0f) {
+            // Bottom row: place above the tile
+            ownerLabel.setPosition(shape.getPosition().x + (shape.getSize().x - ownerLabel.getLocalBounds().width) / 2,
+                                   shape.getPosition().y - ownerLabel.getLocalBounds().height - 5);
+        } else if (position.x == 10 * 80.0f) {
+            // Right column: place to the left of the tile
+            ownerLabel.setPosition(shape.getPosition().x - ownerLabel.getLocalBounds().width - 5,
+                                   shape.getPosition().y + (shape.getSize().y - ownerLabel.getLocalBounds().height) / 2);
+        }
+    } else {
+        ownerLabel.setString("");  // Clear the label if no owner
+    }
 }
 
+
 void Tile::updateLabel() {
-    // Format the name with owner information if available
+    // Format the name with price
     string formattedName = name;
     replace(formattedName.begin(), formattedName.end(), ' ', '\n');
-
-    if (owner) {
-        formattedName += "\n(" + owner->name + ")";
+    if (price > 0) {
+        formattedName = formattedName + "\n" + to_string(price) + "$";
     }
 
+  
     // Set up the label with updated content
     label.setFont(font);
     label.setString(formattedName);
-    label.setCharacterSize(12);  // Adjust size for visibility within the tile
+    label.setCharacterSize(13);  // Adjust size for visibility within the tile
     label.setFillColor(sf::Color::Black);  // Ensure text color contrasts with tile
 
     // Center the label within the tile
@@ -64,9 +87,6 @@ void Tile::centerLabel() {
         shape.getPosition().x + (shape.getSize().x - textBounds.width) / 2,
         shape.getPosition().y + (shape.getSize().y - textBounds.height) / 2 - 5
     );
-
-    // Debugging information to confirm label position
-    cout << "Label centered at position: " << label.getPosition().x << ", " << label.getPosition().y << endl;
 }
 
 int Tile::calculateRent(int diceRollResult) const {

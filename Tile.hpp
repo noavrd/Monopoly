@@ -8,7 +8,6 @@ enum class TileType {
     PROPERTY, RAILROAD, UTILITY, TAX, GO, JAIL, COMMUNITY_CHEST, CHANCE, FREE_PARKING, GO_TO_JAIL
 };
 
-// Define ColorGroup with names matching your colors
 enum class ColorGroup {
     PINK, ORANGE, YELLOW, GREY, MAGENTA, CYAN, WHITE, RED, GREEN, BLUE, NONE
 };
@@ -24,6 +23,7 @@ public:
     ColorGroup colorGroup;
     sf::RectangleShape shape;
     sf::Text label;
+    sf::Text ownerLabel;
     Player* owner;
     sf::Vector2f position;
     const sf::Font& font;

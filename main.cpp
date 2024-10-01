@@ -18,7 +18,7 @@ int main() {
     bool turnTaken = false;  
 
     // Create the window for the game
-    sf::RenderWindow window(sf::VideoMode(700, 700), "Monopoly Game");
+    sf::RenderWindow window(sf::VideoMode(900, 900), "Monopoly Game");
 
     while (window.isOpen()) {
         sf::Event event;

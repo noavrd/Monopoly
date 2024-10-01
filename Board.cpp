@@ -14,7 +14,7 @@ Board::Board() {
     // Initialize player tokens on GO
     for (int i = 0; i < 8; i++) {
         sf::CircleShape token(7.0f);  
-        token.setPosition(10 * 60.0f + i * 5, 10 * 60.0f);  
+        token.setPosition(10 * 80.0f + i * 5, 10 * 80.0f);  
         playerTokens.push_back(token);
     }
 
@@ -27,7 +27,7 @@ Board::Board() {
 }
 
 void Board::initializeBoard() {
-    const float tileSize = 60.0f;  
+    const float tileSize = 80.0f;  
 
     // Define colors using RGB values
     sf::Color Pink(255, 192, 203);
@@ -148,7 +148,7 @@ void Board::draw(sf::RenderWindow& window, const vector<Player>& players) {
 
 
 void Board::updatePlayerPosition(Player& player, int playerIndex) {
-    float tileSize = 60.0f;
+    float tileSize = 80.0f;
     int pos = player.position;
     sf::Vector2f newPosition;
 
