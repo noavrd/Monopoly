@@ -24,6 +24,9 @@ void Tile::draw(sf::RenderWindow& window) {
     if (!ownerLabel.getString().isEmpty()) {
         window.draw(ownerLabel);  // Draw the owner's name if set
     }
+    if (!houseHotelLabel.getString().isEmpty()) {
+        window.draw(houseHotelLabel);  // Draw the house/hotel label if set
+    }
 }
 
 void Tile::setOwner(Player* newOwner) {
@@ -53,11 +56,28 @@ void Tile::setOwner(Player* newOwner) {
             ownerLabel.setPosition(shape.getPosition().x - ownerLabel.getLocalBounds().width - 5,
                                    shape.getPosition().y + (shape.getSize().y - ownerLabel.getLocalBounds().height) / 2);
         }
+
+        // Update house/hotel label
+        houseHotelLabel.setFont(font);
+        houseHotelLabel.setCharacterSize(10);  // Small text for house/hotel
+        houseHotelLabel.setFillColor(sf::Color::Black);
+
+        if (hasHotel) {
+            houseHotelLabel.setString("Hotel");
+        } else if (houses > 0) {
+            houseHotelLabel.setString("Houses: " + to_string(houses));
+        } else {
+            houseHotelLabel.setString("");  // Clear if no houses or hotel
+        }
+
+        // Position the house/hotel label above the owner's name
+        houseHotelLabel.setPosition(ownerLabel.getPosition().x + (ownerLabel.getLocalBounds().width - houseHotelLabel.getLocalBounds().width) / 2,
+                                    ownerLabel.getPosition().y - houseHotelLabel.getLocalBounds().height - 5);
     } else {
         ownerLabel.setString("");  // Clear the label if no owner
+        houseHotelLabel.setString("");  // Clear the house/hotel label
     }
 }
-
 
 void Tile::updateLabel() {
     // Format the name with price
@@ -67,7 +87,6 @@ void Tile::updateLabel() {
         formattedName = formattedName + "\n" + to_string(price) + "$";
     }
 
-  
     // Set up the label with updated content
     label.setFont(font);
     label.setString(formattedName);

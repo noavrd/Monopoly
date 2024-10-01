@@ -43,12 +43,15 @@ void Player::buyProperty(Tile* property) {
 }
 
 
-// Helper function to check color group ownership
 bool Player::ownsAllInColorGroup(const vector<Tile*>& colorGroupTiles) const {
-    return all_of(colorGroupTiles.begin(), colorGroupTiles.end(), [this](Tile* tile) {
-        return tile->owner == this;
-    });
+    for (const Tile* tile : colorGroupTiles) {
+        if (tile->owner != this) {
+            return false;  // Return false as soon as a tile is not owned by the current player
+        }
+    }
+    return true;  // All tiles are owned by the player
 }
+
 
 // Helper function to check house distribution
 bool Player::isEvenHouseDistribution(const vector<Tile*>& colorGroupTiles, Tile* targetProperty) const {
@@ -89,7 +92,7 @@ void Player::buildHotel(Tile* property, Board& board) {
         return;
     }
     if (property->houses == 4 && !property->hasHotel && canAfford(property->houseCost + 100)) {
-        subtractCash(property->houseCost + 100);  // Cost of 4 houses + 100 for the hotel
+        subtractCash(property->houseCost * 4 + 100);  // Cost of 4 houses + 100 for the hotel
         property->houses = 0;  // Reset house count
         property->hasHotel = true;
         cout << name << " built a hotel on " << property->name << "!" << endl;

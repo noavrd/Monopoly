@@ -24,6 +24,7 @@ public:
     sf::RectangleShape shape;
     sf::Text label;
     sf::Text ownerLabel;
+    sf::Text houseHotelLabel;
     Player* owner;
     sf::Vector2f position;
     const sf::Font& font;
@@ -34,6 +35,6 @@ public:
     int calculateRent(int diceRollResult) const;
     TileType getType() const;
     void setOwner(Player* newOwner);
-    void centerLabel();
     void updateLabel();
+    void centerLabel();
 };
