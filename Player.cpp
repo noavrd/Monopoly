@@ -3,7 +3,7 @@
 #include <iostream>
 
 Player::Player(const std::string& playerName)
-    : name(playerName), cash(1500), position(0), inJail(false), jailTurns(0), color(sf::Color::White) {}
+    : name(playerName), cash(1500), position(0), inJail(false), jailTurns(0), hasGetOutOfJailCard(false), color(sf::Color::White) {}
 
 void Player::addCash(int amount) {
     cash += amount;
@@ -129,7 +129,7 @@ void Player::tryExitJail() {
         std::cout << name << " used a 'Get Out of Jail Free' card to exit jail." << std::endl;
     } else if (jailTurns == 0) {
         if (cash >= 50) {
-            cash -= 50;
+            subtractCash(50);
             inJail = false;
             std::cout << name << " paid 50 shekels to exit jail." << std::endl;
         } else {
