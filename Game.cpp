@@ -144,6 +144,62 @@ void Game::rollDice() {
     }
 }
 
+void Game::handlePropertyLanding(Player& currentPlayer, Tile& landedTile) {
+    if (landedTile.owner == nullptr) {
+        std::cout << currentPlayer.name << " landed on " << landedTile.name << ". Would you like to buy it for $"
+                  << landedTile.price << "? Press 'y' to buy or 'n' to decline." << std::endl;
+
+        bool decisionMade = false;
+        while (!decisionMade) {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y)) {
+                currentPlayer.buyProperty(&landedTile);
+                decisionMade = true;
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::N)) {
+                std::cout << currentPlayer.name << " decided not to buy " << landedTile.name << std::endl;
+                decisionMade = true;
+            }
+        }
+    } else if (landedTile.owner == &currentPlayer) {
+        std::cout << currentPlayer.name << " landed on their own property: " << landedTile.name
+                  << ". Would you like to build a house or a hotel? Press 'h' for house, 't' for hotel, or 'n' to do nothing." << std::endl;
+
+        bool decisionMade = false;
+        while (!decisionMade) {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::H)) {
+                currentPlayer.buildHouse(&landedTile, board);  // Pass the board to buildHouse
+                decisionMade = true;
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
+                currentPlayer.buildHotel(&landedTile, board);  // Pass the board to buildHotel
+                decisionMade = true;
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::N)) {
+                std::cout << currentPlayer.name << " decided not to build anything on " << landedTile.name << std::endl;
+                decisionMade = true;
+            }
+        }
+    } else {
+        int rent = landedTile.calculateRent();
+        if (currentPlayer.canAfford(rent)) {
+            currentPlayer.subtractCash(rent);
+            landedTile.owner->addCash(rent);
+            std::cout << currentPlayer.name << " paid $" << rent << " in rent to " << landedTile.owner->name << std::endl;
+        } else {
+            std::cout << currentPlayer.name << " cannot afford rent and is bankrupt!" << std::endl;
+        }
+    }
+}
+
+
+void Game::handleChanceCard(Player& currentPlayer) {
+    // Pick a random chance card
+    int cardIndex = std::rand() % chanceCards.size();
+    ChanceCard& card = chanceCards[cardIndex];
+
+    std::cout << "Chance Card: " << card.description << std::endl;
+    // Apply the card's effect
+    card.applyEffect(currentPlayer, players, currentPlayerIndex);
+}
+
+
 void Game::endTurn() {
     if (!isDoubleRoll) {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();  // Move to the next player

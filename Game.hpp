@@ -2,6 +2,7 @@
 #include "Board.hpp"
 #include "Player.hpp"
 #include "ChanceCard.hpp" 
+#include "Tile.hpp" 
 #include <SFML/Graphics.hpp>
 #include <vector>
 
@@ -22,4 +23,8 @@ private:
     bool isDoubleRoll;
     int consecutiveDoubles;
     std::vector<ChanceCard> chanceCards; 
+
+    // Declare the missing functions
+    void handlePropertyLanding(Player& currentPlayer, Tile& landedTile); 
+    void handleChanceCard(Player& currentPlayer);
 };

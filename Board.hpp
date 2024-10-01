@@ -15,5 +15,6 @@ public:
     void initializeBoard();
     void draw(sf::RenderWindow& window, const std::vector<Player>& players);
     void updatePlayerPosition(Player& player, int playerIndex);
-    void createTile(const std::string& name, int price, TileType type, sf::Vector2f position, sf::Color color);
+    void createTile(const std::string& name, int price, TileType type, ColorGroup colorGroup, sf::Vector2f position, sf::Color color, int houseCost);
+    std::vector<Tile*> getTilesInColorGroup(Tile* property);
 };

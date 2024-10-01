@@ -1,4 +1,5 @@
 #include "Player.hpp"
+#include "Board.hpp"
 #include <iostream>
 
 Player::Player(const std::string& playerName)
@@ -39,8 +40,32 @@ void Player::buyProperty(Tile* property) {
     }
 }
 
-void Player::buildHouse(Tile* property) {
-    if (property->owner == this && property->houses < 4 && !property->hasHotel && canAfford(property->houseCost)) {
+void Player::buildHouse(Tile* property, Board& board) {
+    // Ensure the player owns all properties in the color group
+    std::vector<Tile*> colorGroupTiles = board.getTilesInColorGroup(property);
+    bool ownsAllInColorGroup = true;
+
+    for (Tile* tile : colorGroupTiles) {
+        if (tile->owner != this) {
+            ownsAllInColorGroup = false;
+            break;
+        }
+    }
+
+    if (!ownsAllInColorGroup) {
+        std::cout << name << " cannot build a house on " << property->name << " because they do not own all properties in the color group." << std::endl;
+        return;
+    }
+
+    // Ensure even distribution of houses
+    for (Tile* tile : colorGroupTiles) {
+        if (tile->houses < property->houses) {
+            std::cout << name << " must build evenly across all properties in the color group." << std::endl;
+            return;
+        }
+    }
+
+    if (property->houses < 4 && !property->hasHotel && canAfford(property->houseCost)) {
         subtractCash(property->houseCost);
         property->houses++;
         std::cout << name << " built a house on " << property->name << ". Total houses: " << property->houses << std::endl;
@@ -55,9 +80,26 @@ void Player::buildHouse(Tile* property) {
     }
 }
 
-void Player::buildHotel(Tile* property) {
-    if (property->owner == this && property->houses == 4 && !property->hasHotel && canAfford(property->houseCost)) {
-        subtractCash(property->houseCost);  //  hotel cost is the same as a house cost, maybe change it.
+void Player::buildHotel(Tile* property, Board& board) {
+    // Ensure the player owns all properties in the color group
+    std::vector<Tile*> colorGroupTiles = board.getTilesInColorGroup(property);
+    bool ownsAllInColorGroup = true;
+
+    for (Tile* tile : colorGroupTiles) {
+        if (tile->owner != this) {
+            ownsAllInColorGroup = false;
+            break;
+        }
+    }
+
+    if (!ownsAllInColorGroup) {
+        std::cout << name << " cannot build a hotel on " << property->name << " because they do not own all properties in the color group." << std::endl;
+        return;
+    }
+
+    // Ensure that the property has 4 houses before building a hotel
+    if (property->houses == 4 && !property->hasHotel && canAfford(property->houseCost + 100)) {
+        subtractCash(property->houseCost + 100);  // Cost of 4 houses plus an additional 100 for the hotel
         property->houses = 0;  // Reset house count
         property->hasHotel = true;
         std::cout << name << " built a hotel on " << property->name << "!" << std::endl;
@@ -75,7 +117,7 @@ void Player::buildHotel(Tile* property) {
 void Player::goToJail() {
     inJail = true;
     jailTurns = 3;
-    position = 10;  // position 10 is the Jail tile - maybe change
+    position = 10;  // Position 10 is the Jail tile - adjust if needed
 }
 
 void Player::getOutOfJail() {
@@ -86,7 +128,7 @@ void Player::getOutOfJail() {
 
 int Player::getNumberOfTrains() const {
     int count = 0;
-    for (const Tile* tile : ownedTiles) { 
+    for (const Tile* tile : ownedTiles) {
         if (tile->getType() == TileType::RAILROAD) {
             count++;
         }

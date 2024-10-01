@@ -34,59 +34,72 @@ void Board::initializeBoard() {
     sf::Color Grey(169, 169, 169);
 
     // Bottom row (right to left from GO to Jail)
-    createTile("GO", 0, TileType::GO, {10 * tileSize, 10 * tileSize}, sf::Color::Green);  // Corner
-    createTile("Mediterranean Ave", 60, TileType::PROPERTY, {9 * tileSize, 10 * tileSize}, sf::Color::Magenta);
-    createTile("Community Chest", 0, TileType::COMMUNITY_CHEST, {8 * tileSize, 10 * tileSize}, sf::Color::White);
-    createTile("Baltic Ave", 60, TileType::PROPERTY, {7 * tileSize, 10 * tileSize}, sf::Color::Magenta);
-    createTile("Income Tax", 200, TileType::TAX, {6 * tileSize, 10 * tileSize}, sf::Color::White);
-    createTile("Reading Railroad", 200, TileType::RAILROAD, {5 * tileSize, 10 * tileSize}, Grey);
-    createTile("Oriental Ave", 100, TileType::PROPERTY, {4 * tileSize, 10 * tileSize}, sf::Color::Cyan);
-    createTile("Chance", 0, TileType::CHANCE, {3 * tileSize, 10 * tileSize}, sf::Color::White);
-    createTile("Vermont Ave", 100, TileType::PROPERTY, {2 * tileSize, 10 * tileSize}, sf::Color::Cyan);
-    createTile("Connecticut Ave", 120, TileType::PROPERTY, {1 * tileSize, 10 * tileSize}, sf::Color::Cyan);
-    createTile("Jail / Just Visiting", 0, TileType::JAIL, {0 * tileSize, 10 * tileSize}, sf::Color::Red);  // Corner
+    createTile("GO", 0, TileType::GO, ColorGroup::NONE, {10 * tileSize, 10 * tileSize}, sf::Color::Green, 0);
+    createTile("Mediterranean Ave", 60, TileType::PROPERTY, ColorGroup::MAGENTA, {9 * tileSize, 10 * tileSize}, sf::Color::Magenta, 40);
+    createTile("Community Chest", 0, TileType::COMMUNITY_CHEST, ColorGroup::NONE, {8 * tileSize, 10 * tileSize}, sf::Color::White, 0);
+    createTile("Baltic Ave", 60, TileType::PROPERTY, ColorGroup::MAGENTA, {7 * tileSize, 10 * tileSize}, sf::Color::Magenta, 70);
+    createTile("Income Tax", 200, TileType::TAX, ColorGroup::NONE, {6 * tileSize, 10 * tileSize}, sf::Color::White, 0);
+    createTile("Reading Railroad", 200, TileType::RAILROAD, ColorGroup::NONE, {5 * tileSize, 10 * tileSize}, Grey, 0);
+    createTile("Oriental Ave", 100, TileType::PROPERTY, ColorGroup::CYAN, {4 * tileSize, 10 * tileSize}, sf::Color::Cyan, 80);
+    createTile("Chance", 0, TileType::CHANCE, ColorGroup::NONE, {3 * tileSize, 10 * tileSize}, sf::Color::White, 0);
+    createTile("Vermont Ave", 100, TileType::PROPERTY, ColorGroup::CYAN, {2 * tileSize, 10 * tileSize}, sf::Color::Cyan, 80);
+    createTile("Connecticut Ave", 120, TileType::PROPERTY, ColorGroup::CYAN, {1 * tileSize, 10 * tileSize}, sf::Color::Cyan, 110);
+    createTile("Jail / Just Visiting", 0, TileType::JAIL, ColorGroup::NONE, {0 * tileSize, 10 * tileSize}, sf::Color::Red, 0);
 
     // Left column (bottom to top from Jail to Free Parking)
-    createTile("St. Charles Place", 140, TileType::PROPERTY, {0 * tileSize, 9 * tileSize}, Pink);
-    createTile("Electric Company", 150, TileType::UTILITY, {0 * tileSize, 8 * tileSize}, Grey);
-    createTile("States Ave", 140, TileType::PROPERTY, {0 * tileSize, 7 * tileSize}, Pink);
-    createTile("Virginia Ave", 160, TileType::PROPERTY, {0 * tileSize, 6 * tileSize}, Pink);
-    createTile("Pennsylvania Railroad", 200, TileType::RAILROAD, {0 * tileSize, 5 * tileSize}, Grey);
-    createTile("St. James Place", 180, TileType::PROPERTY, {0 * tileSize, 4 * tileSize}, Orange);
-    createTile("Community Chest", 0, TileType::COMMUNITY_CHEST, {0 * tileSize, 3 * tileSize}, sf::Color::White);
-    createTile("Tennessee Ave", 180, TileType::PROPERTY, {0 * tileSize, 2 * tileSize}, Orange);
-    createTile("New York Ave", 200, TileType::PROPERTY, {0 * tileSize, 1 * tileSize}, Orange);
-    createTile("Free Parking", 0, TileType::FREE_PARKING, {0 * tileSize, 0 * tileSize}, Yellow);  // Corner
+    createTile("St. Charles Place", 140, TileType::PROPERTY, ColorGroup::PINK, {0 * tileSize, 9 * tileSize}, Pink, 120);
+    createTile("Electric Company", 150, TileType::UTILITY, ColorGroup::NONE, {0 * tileSize, 8 * tileSize}, Grey, 0);
+    createTile("States Ave", 140, TileType::PROPERTY, ColorGroup::PINK, {0 * tileSize, 7 * tileSize}, Pink, 110);
+    createTile("Virginia Ave", 160, TileType::PROPERTY, ColorGroup::PINK, {0 * tileSize, 6 * tileSize}, Pink, 105);
+    createTile("Pennsylvania Railroad", 200, TileType::RAILROAD, ColorGroup::NONE, {0 * tileSize, 5 * tileSize}, Grey, 0);
+    createTile("St. James Place", 180, TileType::PROPERTY, ColorGroup::ORANGE, {0 * tileSize, 4 * tileSize}, Orange, 170);
+    createTile("Community Chest", 0, TileType::COMMUNITY_CHEST, ColorGroup::NONE, {0 * tileSize, 3 * tileSize}, sf::Color::White, 0);
+    createTile("Tennessee Ave", 180, TileType::PROPERTY, ColorGroup::ORANGE, {0 * tileSize, 2 * tileSize}, Orange, 150);
+    createTile("New York Ave", 200, TileType::PROPERTY, ColorGroup::ORANGE, {0 * tileSize, 1 * tileSize}, Orange, 100);
+    createTile("Free Parking", 0, TileType::FREE_PARKING, ColorGroup::NONE, {0 * tileSize, 0 * tileSize}, Yellow, 0);
 
     // Top row (left to right from Free Parking to Marvin Gardens)
-    createTile("Kentucky Ave", 220, TileType::PROPERTY, {1 * tileSize, 0 * tileSize}, sf::Color::Red);
-    createTile("Chance", 0, TileType::CHANCE, {2 * tileSize, 0 * tileSize}, sf::Color::White);
-    createTile("Indiana Ave", 220, TileType::PROPERTY, {3 * tileSize, 0 * tileSize}, sf::Color::Red);
-    createTile("Illinois Ave", 240, TileType::PROPERTY, {4 * tileSize, 0 * tileSize}, sf::Color::Red);
-    createTile("B.&O. Railroad", 200, TileType::RAILROAD, {5 * tileSize, 0 * tileSize}, Grey);
-    createTile("Atlantic Ave", 260, TileType::PROPERTY, {6 * tileSize, 0 * tileSize}, sf::Color::Yellow);
-    createTile("Ventnor Ave", 260, TileType::PROPERTY, {7 * tileSize, 0 * tileSize}, sf::Color::Yellow);
-    createTile("Water Works", 150, TileType::UTILITY, {8 * tileSize, 0 * tileSize}, Grey);
-    createTile("Marvin Gardens", 280, TileType::PROPERTY, {9 * tileSize, 0 * tileSize}, sf::Color::Yellow);
-    createTile("Go to Jail", 0, TileType::GO_TO_JAIL, {10 * tileSize, 0 * tileSize}, sf::Color::Magenta);  // Corner
+    createTile("Kentucky Ave", 220, TileType::PROPERTY, ColorGroup::RED, {1 * tileSize, 0 * tileSize}, sf::Color::Red, 200);
+    createTile("Chance", 0, TileType::CHANCE, ColorGroup::NONE, {2 * tileSize, 0 * tileSize}, sf::Color::White, 0);
+    createTile("Indiana Ave", 220, TileType::PROPERTY, ColorGroup::RED, {3 * tileSize, 0 * tileSize}, sf::Color::Red, 170);
+    createTile("Illinois Ave", 240, TileType::PROPERTY, ColorGroup::RED, {4 * tileSize, 0 * tileSize}, sf::Color::Red, 160);
+    createTile("B.&O. Railroad", 200, TileType::RAILROAD, ColorGroup::NONE, {5 * tileSize, 0 * tileSize}, Grey, 0);
+    createTile("Atlantic Ave", 260, TileType::PROPERTY, ColorGroup::YELLOW, {6 * tileSize, 0 * tileSize}, sf::Color::Yellow, 200);
+    createTile("Ventnor Ave", 260, TileType::PROPERTY, ColorGroup::YELLOW, {7 * tileSize, 0 * tileSize}, sf::Color::Yellow, 210);
+    createTile("Water Works", 150, TileType::UTILITY, ColorGroup::NONE, {8 * tileSize, 0 * tileSize}, Grey, 0);
+    createTile("Marvin Gardens", 280, TileType::PROPERTY, ColorGroup::YELLOW, {9 * tileSize, 0 * tileSize}, sf::Color::Yellow, 140);
+    createTile("Go to Jail", 0, TileType::GO_TO_JAIL, ColorGroup::NONE, {10 * tileSize, 0 * tileSize}, sf::Color::Magenta, 0);
 
     // Right column (top to bottom from Go to Jail to Boardwalk)
-    createTile("Pacific Ave", 300, TileType::PROPERTY, {10 * tileSize, 1 * tileSize}, sf::Color::Green);
-    createTile("North Carolina Ave", 300, TileType::PROPERTY, {10 * tileSize, 2 * tileSize}, sf::Color::Green);
-    createTile("Community Chest", 0, TileType::COMMUNITY_CHEST, {10 * tileSize, 3 * tileSize}, sf::Color::White);
-    createTile("Pennsylvania Ave", 320, TileType::PROPERTY, {10 * tileSize, 4 * tileSize}, sf::Color::Green);
-    createTile("Short Line", 200, TileType::RAILROAD, {10 * tileSize, 5 * tileSize}, Grey);
-    createTile("Chance", 0, TileType::CHANCE, {10 * tileSize, 6 * tileSize}, sf::Color::White);
-    createTile("Park Place", 350, TileType::PROPERTY, {10 * tileSize, 7 * tileSize}, sf::Color::Blue);
-    createTile("Boardwalk", 400, TileType::PROPERTY, {10 * tileSize, 8 * tileSize}, sf::Color::Blue);
-    createTile("Luxury Tax", 100, TileType::TAX, {10 * tileSize, 9 * tileSize}, sf::Color::White);
-    createTile("GO", 0, TileType::GO, {10 * tileSize, 10 * tileSize}, sf::Color::Green);
+    createTile("Pacific Ave", 300, TileType::PROPERTY, ColorGroup::GREEN, {10 * tileSize, 1 * tileSize}, sf::Color::Green, 280);
+    createTile("North Carolina Ave", 300, TileType::PROPERTY, ColorGroup::GREEN, {10 * tileSize, 2 * tileSize}, sf::Color::Green, 240);
+    createTile("Community Chest", 0, TileType::COMMUNITY_CHEST, ColorGroup::NONE, {10 * tileSize, 3 * tileSize}, sf::Color::White, 0);
+    createTile("Pennsylvania Ave", 320, TileType::PROPERTY, ColorGroup::GREEN, {10 * tileSize, 4 * tileSize}, sf::Color::Green, 270);
+    createTile("Short Line", 200, TileType::RAILROAD, ColorGroup::NONE, {10 * tileSize, 5 * tileSize}, Grey, 0);
+    createTile("Chance", 0, TileType::CHANCE, ColorGroup::NONE, {10 * tileSize, 6 * tileSize}, sf::Color::White, 0);
+    createTile("Park Place", 350, TileType::PROPERTY, ColorGroup::BLUE, {10 * tileSize, 7 * tileSize}, sf::Color::Blue, 300);
+    createTile("Boardwalk", 400, TileType::PROPERTY, ColorGroup::BLUE, {10 * tileSize, 8 * tileSize}, sf::Color::Blue, 320);
+    createTile("Luxury Tax", 100, TileType::TAX, ColorGroup::NONE, {10 * tileSize, 9 * tileSize}, sf::Color::White, 0);
+    createTile("GO", 0, TileType::GO, ColorGroup::NONE, {10 * tileSize, 10 * tileSize}, sf::Color::Green, 0);
 }
 
-void Board::createTile(const std::string& name, int price, TileType type, sf::Vector2f position, sf::Color color) {
-    Tile tile(name, price, type, position, color, font);
+void Board::createTile(const std::string& name, int price, TileType type, ColorGroup colorGroup, sf::Vector2f position, sf::Color color, int houseCost) {
+    Tile tile(name, price, type, colorGroup, position, color, font, houseCost);
     tiles.push_back(tile);
 }
+
+std::vector<Tile*> Board::getTilesInColorGroup(Tile* property) {
+    std::vector<Tile*> colorGroupTiles;
+    
+    for (Tile& tile : tiles) {
+        if (tile.colorGroup == property->colorGroup) {
+            colorGroupTiles.push_back(&tile);
+        }
+    }
+    
+    return colorGroupTiles;
+}
+
 
 void Board::draw(sf::RenderWindow& window, const std::vector<Player>& players) {
     // Draw the board (tiles, etc.)
@@ -150,4 +163,3 @@ void Board::updatePlayerPosition(Player& player, int playerIndex) {
 
     playerTokens[playerIndex].setPosition(newPosition);
 }
-

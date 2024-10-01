@@ -1,8 +1,8 @@
 #include "Tile.hpp"
 #include "Player.hpp"
 
-Tile::Tile(const std::string& name, int price, TileType type, sf::Vector2f position, sf::Color color, const sf::Font& font)
-    : name(name), price(price), type(type), owner(nullptr) {  // Initialize owner to nullptr
+Tile::Tile(const std::string& name, int price, TileType type, ColorGroup colorGroup, sf::Vector2f position, sf::Color color, const sf::Font& font, int houseCost)
+    : name(name), price(price), type(type), colorGroup(colorGroup), houseCost(houseCost), houses(0), hasHotel(false), owner(nullptr) {  
     shape.setSize({ 60.0f, 60.0f });
     shape.setFillColor(color);
     shape.setPosition(position);
@@ -31,7 +31,7 @@ void Tile::draw(sf::RenderWindow& window) {
 }
 
 int Tile::calculateRent() const {
-    if (this->type == TileType::RAILROAD) {
+    if (type == TileType::RAILROAD) {
         int numberOfTrainsOwned = owner->getNumberOfTrains();
         switch (numberOfTrainsOwned) {
             case 1: return 50;
@@ -40,12 +40,12 @@ int Tile::calculateRent() const {
             case 4: return 200;
             default: return 0;
         }
-    // } else if (hasHotel) {
-    //     return ;
-    // } else if (houses > 0) {
-    //     return rentWithHouse * (1 << (houses - 1));  
+    } else if (hasHotel) {
+        return price / 5 + 100;  // Example calculation for hotel rent
+    } else if (houses > 0) {
+        return price / 10 + (houses * 50);  // Example rent calculation for houses
     } else {
-        return price / 10;
+        return price / 10;  // Base rent without houses or hotels
     }
 }
 
