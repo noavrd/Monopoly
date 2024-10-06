@@ -74,9 +74,7 @@ The game uses SFML (Simple and Fast Multimedia Library) for rendering the board,
   ```
 
 ### Build the Project
-    ```
     make
-    ```
     
 ### Run the Project
     ```bash
