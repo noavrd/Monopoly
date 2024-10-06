@@ -68,14 +68,13 @@ The game uses SFML (Simple and Fast Multimedia Library) for rendering the board,
    Ensure you have a C++ compiler installed that supports C++11 or later. Common options include GCC and Clang.
 
 ### Clone the Repository
-
-  ```bash
-  [git clone https://github.com/noavrd/monopoly.git](https://github.com/noavrd/Monopoly.git)
+   ```
+  git clone https://github.com/noavrd/monopoly.git
   cd monopoly
   ```
 
 ### Build the Project
-    ```bash
+    ```
     make
     ```
     
