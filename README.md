@@ -70,17 +70,16 @@ The game uses SFML (Simple and Fast Multimedia Library) for rendering the board,
 ### Clone the Repository
 
   ```bash
-  git clone https://github.com/noavrd/monopoly.git
+  [git clone https://github.com/noavrd/monopoly.git](https://github.com/noavrd/Monopoly.git)
   cd monopoly
   ```
 
 ### Build the Project
-
     ```bash
     make
     ```
+    
 ### Run the Project
-
     ```bash
     ./monopoly
     ```
