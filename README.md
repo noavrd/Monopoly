@@ -77,6 +77,4 @@ The game uses SFML (Simple and Fast Multimedia Library) for rendering the board,
     make
     
 ### Run the Project
-    ```bash
     ./monopoly
-    ```
