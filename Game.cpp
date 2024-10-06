@@ -9,6 +9,7 @@
 
 using namespace std; 
 
+// Vector of player colors for the game
 vector<sf::Color> playerColors = {
     sf::Color(218, 165, 32), 
     sf::Color(135, 206, 250),  
@@ -20,9 +21,11 @@ vector<sf::Color> playerColors = {
     sf::Color(210, 180, 140)
 };
 
-
-
-
+/*
+ * Game constructor
+ * Initializes the game by setting up players, the board, and the chance cards.
+ * @param numPlayers: The number of players in the game.
+ */
 Game::Game(int numPlayers) : currentPlayerIndex(0), diceRollResult(0), isDoubleRoll(false), consecutiveDoubles(0) {
     srand(time(0));  // Seed for random dice rolls
 
@@ -33,12 +36,16 @@ Game::Game(int numPlayers) : currentPlayerIndex(0), diceRollResult(0), isDoubleR
         players.push_back(player);
     }
 
+    // Initialize chance cards and the board
     chanceCards = initializeChanceCards();
-
-    // Initialize board
     board.initializeBoard();
 }
 
+/*
+ * Handles a player's turn in the game. Includes rolling dice, handling special tiles,
+ * updating player position, and calling the appropriate handlers based on the landed tile.
+ * @param window: The window where the game graphics are rendered.
+ */
 void Game::takeTurn(sf::RenderWindow& window) {
     Player& currentPlayer = players[currentPlayerIndex];
 
@@ -78,6 +85,7 @@ void Game::takeTurn(sf::RenderWindow& window) {
     // Update graphics after rolling dice and moving player
     updateGraphics(window);
 
+    // Get the tile the player landed on and handle accordingly
     Tile& landedTile = board.tiles[currentPlayer.position];
 
     // Property, Railroad, or Utility handling
@@ -86,6 +94,7 @@ void Game::takeTurn(sf::RenderWindow& window) {
     } 
     // Tax handling
     else if (landedTile.type == TileType::TAX) {
+        // Handle tax payment
         if (currentPlayer.canAfford(landedTile.price)) {
             currentPlayer.subtractCash(landedTile.price);
             cout << currentPlayer.name << " paid $" << landedTile.price << " in taxes." << endl;
@@ -118,9 +127,17 @@ void Game::takeTurn(sf::RenderWindow& window) {
     endTurn(window);  // Pass window to endTurn for graphical updates
 }
 
+/*
+ * Handles the scenario when a player goes bankrupt. 
+ * Transfers all assets to the creditor or to the bank depending on the cause of bankruptcy.
+ * @param bankruptPlayer: The player who is bankrupt.
+ * @param creditor: The player who the bankrupt player owes money to, or nullptr if the bank is the creditor.
+ * @param window: The window where the game graphics are rendered.
+ */
 void Game::handleBankruptcy(Player& bankruptPlayer, Player* creditor, sf::RenderWindow& window) {
     cout << bankruptPlayer.name << " is bankrupt!" << endl;
 
+    // Transfer assets to the creditor or bank
     if (creditor) {
         cout << "All assets are transferred to " << creditor->name << endl;
         creditor->cash += bankruptPlayer.cash;
@@ -161,6 +178,14 @@ void Game::handleBankruptcy(Player& bankruptPlayer, Player* creditor, sf::Render
     updateGraphics(window);
 }
 
+
+/*
+ * Handles the logic when a player lands on a property, railroad, or utility.
+ * The player can choose to buy the property, build houses/hotels, or pay rent if owned by another player.
+ * @param currentPlayer: The player who landed on the tile.
+ * @param landedTile: The tile the player landed on.
+ * @param window: The window where the game graphics are rendered.
+ */
 void Game::handlePropertyLanding(Player& currentPlayer, Tile& landedTile, sf::RenderWindow& window) {
     if (landedTile.owner == nullptr) {
         // Check if player can afford the property
@@ -223,6 +248,10 @@ void Game::handlePropertyLanding(Player& currentPlayer, Tile& landedTile, sf::Re
     updateGraphics(window);
 }
 
+/*
+ * Rolls two dice for the current player's turn.
+ * Handles movement, checking for doubles, and passing GO to collect $200.
+ */
 void Game::rollDice() {
     // Roll two dice
     int die1 = rand() % 6 + 1;
@@ -255,6 +284,10 @@ void Game::rollDice() {
     }
 }
 
+/*
+ * Handles the logic for drawing a chance card and applying its effect.
+ * @param currentPlayer: The player who drew the chance card.
+ */
 void Game::handleChanceCard(Player& currentPlayer) {
     // Pick a random chance card
     int cardIndex = rand() % chanceCards.size();
@@ -265,6 +298,12 @@ void Game::handleChanceCard(Player& currentPlayer) {
     card.applyEffect(currentPlayer, players, currentPlayerIndex);
 }
 
+
+/*
+ * Ends the current player's turn and moves to the next player.
+ * If doubles were rolled, the current player takes another turn.
+ * @param window: The window where the game graphics are rendered.
+ */
 void Game::endTurn(sf::RenderWindow& window) {
     if (!isDoubleRoll) {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();  // Move to the next player
@@ -278,6 +317,10 @@ void Game::endTurn(sf::RenderWindow& window) {
     updateGraphics(window);
 }
 
+/*
+ * Checks if the game is over by counting the number of players still in the game.
+ * @return True if the game is over, false otherwise.
+ */
 bool Game::isGameOver() const {
     int activePlayers = 0;
     for (const Player& player : players) {
@@ -288,6 +331,10 @@ bool Game::isGameOver() const {
     return activePlayers <= 1;
 }
 
+/*
+ * Updates the graphics of the game by clearing the window and redrawing the board and players.
+ * @param window: The window where the game graphics are rendered.
+ */
 void Game::updateGraphics(sf::RenderWindow& window) {
     window.clear(sf::Color::White);
     board.draw(window, players);

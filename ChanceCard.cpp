@@ -3,6 +3,13 @@
 
 using namespace std;
 
+/*
+ * Initializes the list of Chance cards with various actions.
+ * Each card has a description and a corresponding lambda function
+ * that defines the action performed when the card is drawn.
+ * The actions affect the player drawing the card and, in some cases,
+ * other players in the game.
+ */
 vector<ChanceCard> initializeChanceCards() {
     return {
         {"Advance to Go (Collect $200)", [](Player& player, vector<Player>&, int&) {
@@ -66,6 +73,7 @@ vector<ChanceCard> initializeChanceCards() {
             int houseCost = 40;
             int hotelCost = 115;
             int totalCost = 0;
+            // Loop through each owned tile and calculate repair costs based on houses and hotels
             for (auto& tile : player.ownedTiles) {
                 Tile* property = dynamic_cast<Tile*>(tile);
                 if (property) {

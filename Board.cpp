@@ -3,6 +3,11 @@
 
 using namespace std;
 
+/*
+ * Constructor for the Board class.
+ * Initializes the font, player tokens, and text box, 
+ * and calls the initializeBoard() function to set up the board.
+ */
 Board::Board() {
     // Load the Arial font
     if (!font.loadFromFile("/usr/share/fonts/truetype/msttcorefonts/Arial.ttf")) {
@@ -26,6 +31,10 @@ Board::Board() {
     gameText.setString("Welcome to Monopoly!");
 }
 
+/*
+ * Initializes the board by creating and placing all the tiles.
+ * Sets up the properties, utilities, railroads, and other special tiles.
+ */
 void Board::initializeBoard() {
     const float tileSize = 80.0f;  
 
@@ -85,11 +94,26 @@ void Board::initializeBoard() {
     createTile("GO", 0, TileType::GO, ColorGroup::NONE, {10 * tileSize, 10 * tileSize}, sf::Color::Green, 0);
 }
 
+/*
+ * Creates a tile with the specified attributes and adds it to the board.
+ * @param name: The name of the tile.
+ * @param price: The price of the tile (if applicable).
+ * @param type: The type of tile (property, railroad, utility, etc.).
+ * @param colorGroup: The color group the tile belongs to.
+ * @param position: The position of the tile on the board.
+ * @param color: The color of the tile.
+ * @param houseCost: The cost of building a house on the tile.
+ */
 void Board::createTile(const string& name, int price, TileType type, ColorGroup colorGroup, sf::Vector2f position, sf::Color color, int houseCost) {
     Tile tile(name, price, type, colorGroup, position, color, font, houseCost);
     tiles.push_back(tile);
 }
 
+/*
+ * Retrieves all the tiles in the same color group as the specified property.
+ * @param property: The reference tile whose color group is being queried.
+ * @return A vector of pointers to the tiles in the same color group.
+ */
 vector<Tile*> Board::getTilesInColorGroup(Tile* property) {
     vector<Tile*> colorGroupTiles;
     
@@ -103,6 +127,11 @@ vector<Tile*> Board::getTilesInColorGroup(Tile* property) {
 }
 
 
+/*
+ * Draws all the board, including tiles and player tokens.
+ * @param window: The render window to draw to.
+ * @param players: A vector of players to be represented on the board.
+ */
 void Board::draw(sf::RenderWindow& window, const vector<Player>& players) {
     // Draw the board (tiles, etc.)
     for (Tile& tile : tiles) {
@@ -146,7 +175,11 @@ void Board::draw(sf::RenderWindow& window, const vector<Player>& players) {
     }
 }
 
-
+/*
+ * Updates the position of a player's token on the board based on their current position.
+ * @param player: The player whose token needs to be updated.
+ * @param playerIndex: The index of the player in the playerTokens vector.
+ */
 void Board::updatePlayerPosition(Player& player, int playerIndex) {
     float tileSize = 80.0f;
     int pos = player.position;

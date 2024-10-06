@@ -4,6 +4,20 @@
 
 using namespace std;
 
+/*
+ * Constructor for the Tile class.
+ * Initializes the tile's attributes such as name, price, type, color group, 
+ * position, color, font, and house cost. Sets up the SFML shape for the tile
+ * and creates the label for display.
+ * @param name: The name of the tile.
+ * @param price: The price of the tile (if applicable).
+ * @param type: The type of tile (e.g., property, utility, railroad).
+ * @param colorGroup: The color group the tile belongs to.
+ * @param position: The position of the tile on the board.
+ * @param color: The color of the tile.
+ * @param font: The font used for the tile's text.
+ * @param houseCost: The cost to build a house on the tile.
+ */
 Tile::Tile(const string& name, int price, TileType type, ColorGroup colorGroup, sf::Vector2f position, sf::Color color, const sf::Font& font, int houseCost)
     : name(name), price(price), type(type), colorGroup(colorGroup), houseCost(houseCost), houses(0), hasHotel(false), owner(nullptr), font(font), position(position) {  
     shape.setSize({ 80.0f, 80.0f });
@@ -18,6 +32,12 @@ Tile::Tile(const string& name, int price, TileType type, ColorGroup colorGroup, 
     updateLabel();
 }
 
+
+/*
+ * Draws the tile, along with the tile's name, owner label, and house/hotel label
+ * on the game window using SFML.
+ * @param window: The render window to draw the tile onto.
+ */
 void Tile::draw(sf::RenderWindow& window) {
     window.draw(shape);       // Draw the tile
     window.draw(label);       // Draw the tile's name
@@ -29,6 +49,12 @@ void Tile::draw(sf::RenderWindow& window) {
     }
 }
 
+/*
+ * Sets the owner of the tile to the specified player. Updates the owner label
+ * with the player's name and adjusts the position of the owner label based on
+ * the tile's position on the board. Also updates the house/hotel label.
+ * @param newOwner: The new owner of the tile.
+ */
 void Tile::setOwner(Player* newOwner) {
     owner = newOwner;
 
@@ -79,6 +105,11 @@ void Tile::setOwner(Player* newOwner) {
     }
 }
 
+/*
+ * Updates the label that displays the tile's name and price.
+ * Formats the name to fit within the tile by replacing spaces with line breaks.
+ * The label is then centered within the tile.
+ */
 void Tile::updateLabel() {
     // Format the name with price
     string formattedName = name;
@@ -97,6 +128,10 @@ void Tile::updateLabel() {
     centerLabel();
 }
 
+/*
+ * Centers the tile's label within the tile's shape by calculating the correct position
+ * based on the label's text bounds and the tile's dimensions.
+ */
 void Tile::centerLabel() {
     // Get the bounds of the label text
     sf::FloatRect textBounds = label.getLocalBounds();
@@ -108,6 +143,13 @@ void Tile::centerLabel() {
     );
 }
 
+/*
+ * Calculates the rent owed for landing on this tile.
+ * Rent is determined based on the tile type (utility, railroad, or property) and
+ * any improvements (houses or hotel) on the property.
+ * @param diceRollResult: The result of the dice roll, used to calculate utility rent.
+ * @return The rent owed for landing on the tile.
+ */
 int Tile::calculateRent(int diceRollResult) const {
     // Utility Rent Logic
     if (type == TileType::UTILITY) {
@@ -133,6 +175,10 @@ int Tile::calculateRent(int diceRollResult) const {
     }
 }
 
+/*
+ * Returns the type of tile (e.g., property, utility, railroad).
+ * @return The tile type.
+ */
 TileType Tile::getType() const {
     return type;
 }
